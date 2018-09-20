@@ -100,10 +100,6 @@
   * [Monitoring at the index level](006-monitoring-es.md/#monitoring-at-the-index-level)
 
 - [Use Cases](007-use-cases.md/#use-cases)
-  * [An Advanced Elasticsearch Architecture for High-volume Reindexing](007-use-cases.md/#an-advanced-elasticsearch-architecture-for-high-volume-reindexing)
-    + [A glimpse at our infrastructure](007-use-cases.md/#a-glimpse-at-our-infrastructure)
-    + [Using Elasticsearch for fun and profit](007-use-cases.md/#using-elasticsearch-for-fun-and-profit)
-    + [Conclusion](007-use-cases.md/#conclusion)
   * [How we reindexed 36 billion documents in 5 days within the same Elasticsearch cluster](007-use-cases.md/#how-we-reindexed-36-billion-documents-in-5-days-within-the-same-elasticsearch-cluster)
     + [The "Blackhole" cluster](007-use-cases.md/#the--blackhole--cluster)
     + [Elasticsearch configuration](007-use-cases.md/#elasticsearch-configuration)
@@ -131,6 +127,11 @@
     + [Conclusion](007-use-cases.md/#conclusion-2)
 
 - [Use Cases: Migrating a Cluster Across the Ocean Without Downtime](008-use-case-migrating-cluster-over-ocean.md)
+
+- [Use Case: An Advanced Elasticsearch Architecture for High-volume Reindexing](009-advanced-architecture-high-volume-reindexing.md)
+  * [A glimpse at our infrastructure](009-advanced-architecture-high-volume-reindexing.md/#a-glimpse-at-our-infrastructure)
+  * [Using Elasticsearch for fun and profit](009-advanced-architecture-high-volume-reindexing.md/#using-elasticsearch-for-fun-and-profit)
+  * [Conclusion](009-advanced-architecture-high-volume-reindexing.md/#conclusion)
 
 ---
 
