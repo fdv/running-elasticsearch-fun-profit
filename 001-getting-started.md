@@ -1,4 +1,6 @@
-**WIP, covers Elasticsearch 5.5.x**
+```
+WIP, COVERS ELASTICSEARCH 5.5.x
+```
 
 # Getting Started with Elasticsearch
 
@@ -21,6 +23,8 @@ Elasticsearch is a distributed, scalable, fault tolerant open source search engi
 - Scalable: Elasticsearch scales horizontally. Horizontal scaling means that the cluster can grow by adding new nodes without restarting the cluster. When a new node joins the cluster, it gets a part of the existing data. Horizontal scaling is the opposite of vertical scaling, where the only way to grow is running a software on a bigger machine.
 - Fault tolerant: Elasticsearch ensures the data is replicated at least once - unless specified - on 2 separate nodes. When a node leaves the cluster, Elasticsearch rebuilds the replication on the remaining nodes, unless there\'s no more node to replicate to.
 
+---
+
 ## What's an Elasticsearch cluster?
 
 An Elasticsearch cluster is a node or a group of nodes filling the following roles:
@@ -34,6 +38,8 @@ Data nodes: Nodes where the data is stored. Data nodes are responsible for manag
 A single node can fulfil every required role, at the cost of fault tolerance and horizontal scaling.
 
 TODO: add a cluster schema
+
+---
 
 ## What's an Elasticsearch index
 

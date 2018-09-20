@@ -1,3 +1,7 @@
+```
+WIP, COVERS ELASTICSEARCH 5.5.x
+```
+
 # Use Cases
 
 TODO: spllit, clean and rewrite

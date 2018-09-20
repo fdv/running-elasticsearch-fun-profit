@@ -1,4 +1,6 @@
-**WIP, covers Elasticsearch 5.5.x**
+```
+WIP, COVERS ELASTICSEARCH 5.5.x
+```
 
 # Elasticsearch and the Java Virtual Machine
 
