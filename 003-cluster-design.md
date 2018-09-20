@@ -53,7 +53,7 @@ As many data nodes as you need, split evenly between both main locations.
 
 Architecture of a fault tolerant Elasticsearch cluster
 
-![Architecture of a fault tolerant Elasticsearch cluster](images/003-cluster-design/image1.tif)
+![Architecture of a fault tolerant Elasticsearch cluster](images/003-cluster-design/image1.png)
 
 Elasticsearch design for failure
 
@@ -76,7 +76,7 @@ Lucene is the name of the search engine that powers Elasticsearh. It is an open 
 
 Each Elasticsearch index is divided into shards. Shards are both logical and physical division of an index. Each Elasticsearch shard is a Lucene index. The maximum number of documents you can have in a Lucene index is 2,147,483,519. The Lucene index is divided into smaller files called segments. A segment is a small Lucene index. Lucene searches in all segments sequentially.
 
-![Inside an Elasticsearch index](images/003-cluster-design/image2.tif)
+![Inside an Elasticsearch index](images/003-cluster-design/image2.png)
 
 Lucene creates a segment when a new writer is opened, and when a writer commits or is closed. It means segments are immutable. When you add new documents into your Elasticsearch index, Lucene creates a new segment and writes it. Lucene can also create more segments when the indexing throughput is important.
 
@@ -340,11 +340,11 @@ The state of your thread pools, especially the state of rejected threads. And ra
 
 The number of search / writes per second
 
-![Monitoring Elasticsearch request rate](images/003-cluster-design/image4.tif)
+![Monitoring Elasticsearch request rate](images/003-cluster-design/image4.png)
 
 The average time taken by your queries
 
-![Monitoring Elasticsearch search latency](images/003-cluster-design/image5.tif)
+![Monitoring Elasticsearch search latency](images/003-cluster-design/image5.png)
 
 A good way to know which queries take the more time is by using Elasticsearch slow queries logs.
 

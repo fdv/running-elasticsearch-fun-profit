@@ -5,7 +5,7 @@
 
 ---
 
-![](images/readme/image1.jpeg)
+![](images/readme/image1.png)
 
 
 ## [Fred de Villamil](https://thoughts.t37.net)

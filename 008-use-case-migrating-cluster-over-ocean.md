@@ -27,11 +27,11 @@ Once the cluster was all green, I could shutdown the second Canadian node, then 
 
 You may have noticed that at that time, routing nodes were still in Canada, and data in France.
 
-![Cluster Topology](images/008-use-case-migrating-cluster-over-ocean/image2.jpeg) 
+![Cluster Topology](images/008-use-case-migrating-cluster-over-ocean/image2.png) 
 
 That's right. The latest part of it was playing with DNS.
 
-![Changing the DNS on Amazon](images/008-use-case-migrating-cluster-over-ocean/image3.jpeg)
+![Changing the DNS on Amazon](images/008-use-case-migrating-cluster-over-ocean/image3.png)
 
 The main ES hostname the application accesses is managed using Amazon Route53. Route53 provides some nice round robin thing so the same A record can point on many IPs or CNAME with a weight system. It's pretty cool even though it does not provide failover. If one of your nodes crash, it needs to unregister itself from route53.
 
