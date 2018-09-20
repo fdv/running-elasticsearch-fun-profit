@@ -2,13 +2,19 @@
 
 # Operating Elasticsearch
 ## for Fun and Profit
-===
+
+---
 
 ![](images/readme/image1.jpeg)
 
 
-## Fred de Villamil
+## [Fred de Villamil](https://thoughts.t37.net)
 
+---
+
+## [Read online](https://fdv.github.io/running-elasticsearch-fun-profit)
+
+---
 
 ## TOC
 
@@ -124,3 +130,71 @@
       - [Expanding Blackhole](007-use-cases.md/#expanding-blackhole)
       - [Splitting Blackhole in 2](007-use-cases.md/#splitting-blackhole-in-2)
     + [Conclusion](007-use-cases.md/#conclusion-2)
+
+---
+
+## Styling
+
+This is the Markdown styling used in this book. If you plan to contribute, please use it.
+
+Chapter title:
+
+```markdown
+# This is a chapter title
+
+```
+
+Chapter part:
+
+```markdown
+---
+
+## A chapter part title is preceded by an horizontal line
+```
+
+Chapter subpart:
+
+```markdown
+### A level 1 subpart
+#### A level 2 subpart
+```
+
+Images:
+
+```markdown
+![An image should have an alt text](use/a/relative.link)
+```
+
+Code:
+
+```markdown
+An `inline code block` goes like this
+```
+
+Links:
+
+```markdown
+[An internal link](has/a/relative.path)
+[An external link](https://has.an.absolute/path)
+```
+
+Lists
+
+```markdown
+Only one line break between a paragraph and
+
+* An 
+* unordered
+* list
+	* with
+	* subitems
+
+or
+
+1. An
+2. Ordered
+3. List
+	1. With
+	2. subitems
+```
+
