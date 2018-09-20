@@ -100,7 +100,6 @@
   * [Monitoring at the index level](006-monitoring-es.md/#monitoring-at-the-index-level)
 
 - [Use Cases](007-use-cases.md/#use-cases)
-  * [Migrating a Cluster Across the Ocean Without Downtime](007-use-cases.md/#migrating-a-cluster-across-the-ocean-without-downtime)
   * [An Advanced Elasticsearch Architecture for High-volume Reindexing](007-use-cases.md/#an-advanced-elasticsearch-architecture-for-high-volume-reindexing)
     + [A glimpse at our infrastructure](007-use-cases.md/#a-glimpse-at-our-infrastructure)
     + [Using Elasticsearch for fun and profit](007-use-cases.md/#using-elasticsearch-for-fun-and-profit)
@@ -130,6 +129,8 @@
       - [Expanding Blackhole](007-use-cases.md/#expanding-blackhole)
       - [Splitting Blackhole in 2](007-use-cases.md/#splitting-blackhole-in-2)
     + [Conclusion](007-use-cases.md/#conclusion-2)
+
+- [Use Cases: Migrating a Cluster Across the Ocean Without Downtime](008-use-case-migrating-cluster-over-ocean.md)
 
 ---
 
@@ -183,7 +184,7 @@ Lists
 ```markdown
 Only one line break between a paragraph and
 
-* An 
+* An
 * unordered
 * list
 	* with
