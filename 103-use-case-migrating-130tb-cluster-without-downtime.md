@@ -24,11 +24,11 @@ Blackhole is a 77 nodes cluster, with 200TB storage, 4.8TB RAM, 2.4TB being allo
 
 Blackhole data nodes are spread between 2 data center. By using rack awareness, we make sure that each data center holds 100% of the data, for high availability. Ingest nodes are rack aware as well, to leverage Elasticsearch prioritising nodes within the same rack when running a query. This allows us to minimise the latency when running a query. A Haproxy controls both the ingest nodes health and proper load balancing amongst all of them.
 
-![Blackhole rack awareness design](images/010-use-case-migrating-130tb-cluster-without-downtime/image16.png)
+![Blackhole rack awareness design](images/103-use-case-migrating-130tb-cluster-without-downtime/image16.png)
 
 Blackhole is feeding is a small part of a larger processing chain. After multiple enrichment and transformation, the data is pushed into a large Kafka queue. A working unit reads the Kafka queue and pushes the data into Blackhole.
 
-![Blackhole processing chain](images/010-use-case-migrating-130tb-cluster-without-downtime/image17.png)
+![Blackhole processing chain](images/103-use-case-migrating-130tb-cluster-without-downtime/image17.png)
 
 This has many pros, the first one being to be able to replay a whole part of the process in case of error. The only con here is having enough disk space for the data retention, but in 2017 disk space is not a problem anymore, even on a 10s of TB scale.
 
@@ -98,7 +98,7 @@ We added 90 new servers, split in 2 data centers. Each server has a 6 core Xeon 
 
 These servers were deployed with a Debian Stretch and Elasticsearch 2.3. We had some issues as Elasticsearch 2 systemd scripts don't work on Stretch, so we had to run the service manually. We configured Elasticsearch to use 2 new racks, Barack and Chirack. Then, we updated the replication factor to 3.
 
-![Blackhole, expanded](images/010-use-case-migrating-130tb-cluster-without-downtime/image18.png)
+![Blackhole, expanded](images/103-use-case-migrating-130tb-cluster-without-downtime/image18.png)
 
 ```bash
 curl -XPUT "localhost:9200/*/_settings" -H 'Content-Type: application/json' -d '{
@@ -117,7 +117,7 @@ On the vanity metrics level, Blackhole had:
 * 10,84TB RAM, 5.42TB being allocated to Java,
 * 2004 core.
 
-![Blackhole on steroids](images/010-use-case-migrating-130tb-cluster-without-downtime/image19.png)
+![Blackhole on steroids](images/103-use-case-migrating-130tb-cluster-without-downtime/image19.png)
 
 If you're wondering why we didn't decide to save time, only raising the replication factor to 2, then do it, lose a data node, enjoy, and read the basics of distributed systems before you want to run one in production.
 
@@ -127,22 +127,22 @@ Blackhole initial settings were:
 
 ```yaml
 cluster:
-  routing: 
+  routing:
     allocation:
-      disk: 
-        threshold_enabled: true 
-        watermark: 
-          low: "78%" 
+      disk:
+        threshold_enabled: true
+        watermark:
+          low: "78%"
           high: "79%"
-      node_initial_primaries_recoveries: 50 
+      node_initial_primaries_recoveries: 50
       node_concurrent_recoveries: 20
       allow_rebalance": "always"
-      cluster_concurrent_rebalance: 50 
-    rebalance.enable: "all" 
-    
+      cluster_concurrent_rebalance: 50
+    rebalance.enable: "all"
+
 indices:
-  recovery: 
-    max_bytes_per_sec: "2048mb" 
+  recovery:
+    max_bytes_per_sec: "2048mb"
     concurrent_streams: 30
 ```
 
@@ -152,12 +152,12 @@ We decided to speed up the cluster recovery a bit, and disable the reallocation 
 cluster:
   routing:
     allocation:
-      disk: 
+      disk:
         watermark.low : "98%"
         watermark.high : "99%"
     rebalance.enable: "none"
 
-indices: 
+indices:
   recovery:
     max_bytes_per_sec: "4096mb"
     concurrent_streams: 50
@@ -173,7 +173,7 @@ Thankfully, there's a trick for that.
 
 Elasticsearch provides a concept of zone, which can be combined with rack awareness for a better allocation granularity. For example, you can dedicate lot of hardware to the freshest, most frequently accessed content, less hardware to content accessed less frequently and even less hardware to content that is never accessed. Zones are configured on the host level.
 
-![Zone configuration](images/010-use-case-migrating-130tb-cluster-without-downtime/image20.png)
+![Zone configuration](images/103-use-case-migrating-130tb-cluster-without-downtime/image20.png)
 
 We decided to create a zone that would only hold the data of the day, so the hardware would be less stressed by the migration.
 
@@ -237,7 +237,7 @@ curl -XPUT "localhost:9200/_cluster/settings" -H 'Content-Type: application/json
 
 Then, we shat down Elasticsearch on Barack, Chirack and one of the cluster master nodes.
 
-![Moving from zone to zone](images/010-use-case-migrating-130tb-cluster-without-downtime/image21.png)
+![Moving from zone to zone](images/103-use-case-migrating-130tb-cluster-without-downtime/image21.png)
 
 Removing nodes to create a new Blackhole
 
@@ -251,7 +251,7 @@ curl -XPUT "localhost:9200/*/_settings" -H 'Content-Type: application/json' -d '
 	}
 }'
 
-curl -XPUT "localhost;9200/_cluster/settings" -H 'Content-Type: application/json' -d 
+curl -XPUT "localhost;9200/_cluster/settings" -H 'Content-Type: application/json' -d
 '{
 	"transient" : {
 		"cluster.routing.allocation.enable" : "all"
@@ -286,7 +286,7 @@ The last thing was to add a work unit to feed that Blackhole02 cluster and catch
 
 The whole migration took less than 20 hours, including transferring 130TB of data on a dual data center setup.
 
-![The migration](images/010-use-case-migrating-130tb-cluster-without-downtime/image22.png)
+![The migration](images/103-use-case-migrating-130tb-cluster-without-downtime/image22.png)
 
 The most important point here was that we were able to rollback at any time, including after the migration if something was wrong on the application level.
 
