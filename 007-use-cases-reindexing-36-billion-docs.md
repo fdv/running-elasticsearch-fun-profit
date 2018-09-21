@@ -80,17 +80,17 @@ action:
 
 indices:
 	recovery:
-		max_bytes_per_sec: 2048mb
+		max_bytes_per_sec: "2048mb"
 	fielddata:
 		breaker:
-			limit: 80%
+			limit: "80%"
 		cache:
-			size: 25%
-			expire: 1m
+			size: "25%"
+			expire: "1m"
 
 store:
 	throttle:
-	type: 'none'
+	type: "none"
 
 discovery:
 	zen:
@@ -105,19 +105,19 @@ ping:
 threadpool:
 	bulk:
 		queue_size: 3000
-		type: cached
+		type: "cached"
 	index:
 		queue_size: 3000
-		type: cached
+		type: "cached"
 
 bootstrap:
 	mlockall: true
 
 memory:
-	index_buffer_size: 10%
+	index_buffer_size: "10%"
 
 http:
-	max_content_length: 1024mb
+	max_content_length: "1024mb"
 ```
 
 After trying both ElasticSearch default_fs and mmapfs, we've picked up [niofs](https://www.elastic.co/guide/en/elasticsearch/reference/current/index-modules-store.html)for file system storage.
@@ -229,7 +229,16 @@ Target node behavior
 For the first tests, we ran logstash against a full day of reindexation, using a simple Elasticsearch query:
 
 ```json
-query => '{ "query": { "range": { "date": { "gte": "yyyy-mm-ddT00:00.000", "lte": "yyyy-mm-dd+1T00:00.000+01:00" } } } }
+{ 
+  "query": { 
+    "range": { 
+      "date": { 
+        "gte": "yyyy-mm-ddT00:00.000", 
+        "lte": "yyyy-mm-dd+1T00:00.000+01:00"
+      } 
+    } 
+  } 
+}
 ```
 
 Unfortunately, for some reasons, we had missing documents because our scroll keepalive of 5 minutes was too short. This made catching up with the data too long as we had to replay the whole day, so we decided to run hourly queries.
@@ -279,7 +288,7 @@ We changed only a few settings for that reindexing.
 
 ```yaml
 memory:
-	index_buffer_size: 50% (instead of 10%)
+	index_buffer_size: 50% # (instead of 10%)
 
 index:
 	store:
@@ -288,7 +297,7 @@ index:
 
 	translog:
 		disable_flush: true
-	refresh_interval: -1 (instead of 1s)
+	refresh_interval: -1 # (instead of 1s)
 
 indices:
 	store:
@@ -306,15 +315,10 @@ Yoko and Moulinette use a simple MySQL database with every index to process, que
 
 ```sql
 CREATE TABLE `yoko` (
-
-`index_from` varchar(16) NOT NULL,
-
-`index_to` varchar(16) NOT NULL,
-
-`logstash_query` text NOT NULL,
-
-`status` enum("todo", "processing", "done", "complete", "failed") DEFAULT "todo"
-
+  `index_from` varchar(16) NOT NULL,
+  `index_to` varchar(16) NOT NULL,
+  `logstash_query` text NOT NULL,
+  `status` enum("todo", "processing", "done", "complete", "failed") DEFAULT "todo"
 );
 ```
 
@@ -332,13 +336,15 @@ Delete each monthly index when every day of a month is "complete".
 
 Changes the refresh values when a daily index is "complete".
 
-```
-PUT /index/_settings?master_timeout=120s {
+```bash
+curl -XPUT "localhost:9200/index/_settings" -H 'Content-Type: application/json' -d '
+{
 	"translog.disable_flush" : "false",
 	"index" : {
 		"refresh_interval" : "1s"
 	}
 }
+'
 ```
 
 Moulinette is the processing script. It's a small daemon written in Bash (with some ugly bashisms) that runs on every indexing node. It fetches lines in "todo" from the *yoko* table, generates the logstash.conf with the source and destination index, and source and destination node and Logstash query. Then it runs Logstash, and once Logstash exits, switches the line to "done" if Logstash exit code is 0, or "failed" otherwise.

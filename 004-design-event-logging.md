@@ -54,10 +54,11 @@ When you can lose your search backend for a few hours, or don't want to invest i
 
 The host minimal configuration is then:
 
-```
+```yaml
 master: true
 data: true
-index.number_of_replicas: 0
+index:
+  number_of_replicas: 0
 ```
 
 If you start combining events analysis with alerting, or if you need your events to be searchable in realtime without downtime, then things get a bit more expensive. For example, you might want to correlate your whole platform auth.log to look for intrusion attempts or port scanning, so you can deploy new firewall rules accordingly. Then you'll have to start with a 3 nodes cluster. 3 nodes is a minimum since you need 2 active master nodes to avoid a split brain.
@@ -66,18 +67,20 @@ If you start combining events analysis with alerting, or if you need your events
 
 Here, the minimal hosts configuration for the master / http node is:
 
-```
+```yaml
 master: true
 data: false
-index.number_of_replicas: 1
+index:
+  number_of_replicas: 1
 ```
 
 And for the data nodes:
 
-```
+```yaml
 master: true
 data: true
-index.number_of_replicas: 1
+index:
+  number_of_replicas: 1
 ```
 
 If you decide to go cheap and combine the master and data nodes in a 3 hosts cluster, never use bulk indexing.
@@ -114,7 +117,7 @@ On a multiple node infrastructure, I prefer to multiply the smaller hosts with a
 
 As usual, it depends on your needs, but this is the time to play with aliases and timestamped indexes. For example, if you're storing the output of your infrastructure auth.log, your indices can be:
 
-```
+```bash
 auth-\$(date +%Y-%m-%d)
 ```
 
@@ -130,31 +133,40 @@ Depending on your throughput, you might need a large [indexing buffer](https://
 
 Elasticsearch default index buffer is 10% of the memory allocated to the heap. But for heavy indexing operations, you might want to raise it to 30%, if not 40%.
 
-```
-indices.memory.index_buffer_size: 40%
+```yaml
+indices:
+  memory:
+    index_buffer_size: "40%"
 ```
 
 Elasticsearch provides a per node [query cache](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-cache.html). Let's put it this way: you don't need caching on an event logging infrastructure. There's a way to disable it completely and that's what we want.
 
-```
-indices.query.cache.enabled: false
+```yaml
+indices:
+  query:
+    cache.enabled: false
 ```
 
 You will also have a look at the indexing thread pool. I don't recommend changing the thread pool size, but depending on your throughput, changing the queue size might be a good idea in case of indexing spike.
 
-```
-thread_pool.bulk.queue_size: 3000
-thread_pool.index.queue_size: 3000
+```yaml
+thread_pool:
+  bulk:
+    queue_size: 3000
+  index:
+    queue_size: 3000
 ```
 
 Finally, you will want to disable the store throttle if you're running on enough fast disks.
 
-```
-store.throttle.type: 'none'
+```yaml
+store:
+  throttle.type: 'none'
 ```
 
 One more thing: when you don't need data in realtime, but can afford waiting a bit, you can cut your cluster a little slack by raising the indices refresh interval.
 
-```
-index.refresh_interval: "1m"
+```yaml
+index:
+  refresh_interval: "1m"
 ```
