@@ -101,11 +101,12 @@ These servers were deployed with a Debian Stretch and Elasticsearch 2.3. We had 
 ![Blackhole, expanded](images/010-use-case-migrating-130tb-cluster-without-downtime/image18.png)
 
 ```bash
-PUT /*/_settings {
+curl -XPUT "localhost:9200/*/_settings" -H 'Content-Type: application/json' -d '{
 	"index" : {
 		"number_of_replicas" : 3
 	}
 }
+'
 ```
 
 On the vanity metrics level, Blackhole had:
@@ -125,28 +126,41 @@ Expanding Blackhole, we had to change a few dynamic settings for allocation and 
 Blackhole initial settings were:
 
 ```yaml
----
-cluster.routing.allocation.disk.threshold_enabled: true 
-cluster.routing.allocation.disk.watermark.low: "78%" 
-cluster.routing.allocation.disk.watermark.high: "79%"
-cluster.routing.allocation.node_initial_primaries_recoveries: 50 
-cluster.routing.allocation.node_concurrent_recoveries: 20
-indices.recovery.max_bytes_per_sec: "2048mb" 
-indices.recovery.concurrent_streams: 30
-cluster.routing.rebalance.enable: "all" 
-cluster.routing.allocation.cluster_concurrent_rebalance: 50 
-cluster.routing.allocation.allow_rebalance": "always"
+cluster:
+  routing: 
+    allocation:
+      disk: 
+        threshold_enabled: true 
+        watermark: 
+          low: "78%" 
+          high: "79%"
+      node_initial_primaries_recoveries: 50 
+      node_concurrent_recoveries: 20
+      allow_rebalance": "always"
+      cluster_concurrent_rebalance: 50 
+    rebalance.enable: "all" 
+    
+indices:
+  recovery: 
+    max_bytes_per_sec: "2048mb" 
+    concurrent_streams: 30
 ```
 
 We decided to speed up the cluster recovery a bit, and disable the reallocation completely to avoid mixing both of them until the migration was over. To make sure the cluster would use as much disk space as possible without problems, we raised the watermark thresholds to the maximum.
 
 ```yaml
----
-cluster.routing.allocation.disk.watermark.low : 98%
-cluster.routing.allocation.disk.watermark.high : 99%
-indices.recovery.max_bytes_per_sec: "4096mb"
-indices.recovery.concurrent_streams: 50
-cluster.routing.rebalance.enable: "none"
+cluster:
+  routing:
+    allocation:
+      disk: 
+        watermark.low : "98%"
+        watermark.high : "99%"
+    rebalance.enable: "none"
+
+indices: 
+  recovery:
+    max_bytes_per_sec: "4096mb"
+    concurrent_streams: 50
 ```
 
 Them Came the Problems
@@ -166,30 +180,37 @@ We decided to create a zone that would only hold the data of the day, so the har
 To do it without rollbacking, we decided to disable the recovery, before we forced the indices allocation.
 
 ```bash
-PUT /_cluster/settings {
-	"transient" : {
+curl -XPUT "localhost:9200/_cluster/settings" -H 'Content-Type: application/json' -d '
+{
+    "transient" : {
 		"cluster.routing.allocation.enable" : "none"
 	}
 }
+'
 
-PUT /*/_settings {
+curl -XPUT "localhost:9200/*/_settings" -H 'Content-Type: application/json' -d '
+{
 	"index.routing.allocation.exclude.zone" : "fresh"
 }
+'
 
-PUT /latest/_settings -d {
+curl -XPUT "localhot:9200/latest/_settings" -H 'Content-Type: application/json' -d '
+{
 	"index.routing.allocation.exclude.zone" : "",
 	"index.routing.allocation.include.zone" : "fresh"
 }
+'
 ```
 
 After a few minutes, the cluster was quiet and we were able to resume the migration.
 
 ```bash
-PUT /_cluster/settings {
+curl -XPUT "localhost:9200/_cluster/settings" -H 'Content-Type: application/json' -d '
+{
 	"transient" : {
 		"cluster.routing.allocation.enable" : "all"
 	}
-}
+}'
 ```
 
 Another way to do it is by playing with the `_ip` exclusion, but when you have more than 150 data nodes, it becomes a bit complicated. Also, you need to know that include and exclude are mutually exclusive, and can lead to some headache the first time you use them.
@@ -205,11 +226,13 @@ The next step of the migration was creating a full clone of Blackhole. To clone 
 Before doing anything, we disabled the shard allocation globally.
 
 ```bash
-PUT /_cluster/settings {
+curl -XPUT "localhost:9200/_cluster/settings" -H 'Content-Type: application/json' -d '
+{
 	"transient" : {
 		"cluster.routing.allocation.enable" : "none"
 	}
 }
+'
 ```
 
 Then, we shat down Elasticsearch on Barack, Chirack and one of the cluster master nodes.
@@ -221,17 +244,20 @@ Removing nodes to create a new Blackhole
 Then, we reduced the replica number on Blackhole to 1, and enabled allocation.
 
 ```bash
-PUT /*/_settings {
+curl -XPUT "localhost:9200/*/_settings" -H 'Content-Type: application/json' -d '
+{
 	"index" : {
 		"number_of_replicas" : 1
 	}
-}
+}'
 
-PUT /_cluster/settings {
+curl -XPUT "localhost;9200/_cluster/settings" -H 'Content-Type: application/json' -d 
+'{
 	"transient" : {
 		"cluster.routing.allocation.enable" : "all"
 	}
 }
+'
 ```
 
 **The following step were performed with Elasticsearch being stopped on the removed hosts.**
@@ -245,7 +271,7 @@ Then, we started Elasticsearch first on the master taken from Blackhole, then on
 We then closed all the existing indexes:
 
 ```bash
-PUT /*/_close
+curl -XPUT "localhost:9200/*/_close"
 ```
 
 It was time to upgrade Elasticsearch on that new Cluster. This was done in a few minutes running our [Ansible](https://ansible.org/) playbook.

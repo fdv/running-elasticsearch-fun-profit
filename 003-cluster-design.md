@@ -60,8 +60,15 @@ Elasticsearch design for failure
 Elasticsearch provides an interesting feature called shard allocation awareness. It allows to split the primary shards and their replica in separated zones. Allocate nodes within a same data center to a same zone to limit the odds of having your cluster go red.
 
 ```yaml
-cluster.routing.allocation.awareness.attributes: "rack_id"
-node.attr.rack\id: "dontsmokecrack"
+cluster:
+  routing:
+    allocation:
+      awareness: 
+        attributes: "rack_id"
+
+node:
+  attr:
+    rack_id: "dontsmokecrack"
 ```
 
 Using `rack_id` on the http nodes is interesting too, as Elasticsearch will run the queries on the closest neighbours. A query sent to the http node located in the datacenter 1 will more likely run on the same data center data nodes.
@@ -121,10 +128,10 @@ For example, Xeon E5 v4 provides 60% better performances than the v3 version whe
 
 Speaking of CPU, Elasticsearch divides the CPU use into [thread pools](https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-threadpool.html) of various types:
 
-- **generic:** for standard operations such as discovery
-- **index:** for indexing
-- **get:** for get operations, obviously
-- **bulk:** for bulk operations such as bulk indexing
+- `generic` for standard operations such as discovery
+- `index` for indexing
+- `get` for get operations, obviously
+- `bulk` for bulk operations such as bulk indexing
 
 These are the most important ones you'll have to deal with, RTFM for everything else
 
@@ -132,8 +139,8 @@ Each pool runs a number of threads, which can be configured, and has a queue, wh
 
 I wouldn't recommend changing the thread pool size unless you really know what you do, the defaults settings are quite sensible. You might want to adapt the queue size though, as filling the queue size means the operations will be rejected. You can get a glance of your thread pool state using the thread_pool API.
 
-```
-GET /_cat/thread_pool/search?v&h=host,name,active,rejected,completed
+```bash
+curl -XGET "localhost:9200/_cat/thread_pool/search?v&h=host,name,active,rejected,completed"
 ```
 
 A special trick when your cluster is CPU bound and you can support a replica of your data set on every node: run your cluster behind a Haproxy and bypass the http nodes to hit the data node. If you have heterogeneous nodes, give a greater weight to the nodes with the highest number of cores.
@@ -154,8 +161,8 @@ That said, choosing the right amount of memory to fill in the heap is the most t
 
 Elasticsearch provides plenty of metrics to understand how the workload wights on the memory.
 
-```
-GET /_nodes/stats
+```bash
+curl -XGET "localhost:9200/_nodes/stats"
 ```
 
 Elasticsearch uses multiple buffers to perform in memory operations, as well as caches to store the queries results with a system of LRU when the cache becomes full. When the results are mostly large datasets and the queries are not repeated often, disabling the caches might be a good idea.
@@ -183,8 +190,10 @@ Niofs lets the kernel manage the file system cache instead of relying on the bro
 
 You might also want to commit the exact amount of memory you want to allocate to the heap at startup. This prevents the node from swapping when trying to allocate the memory it needs because no more memory is available.
 
-```
-boostrap.memory_lock (previously bootstrap.mlockall)
+```yaml
+# previously bootstrap.mlockall
+boostrap:
+  memory_lock: true 
 ```
 
 ### Network
@@ -195,14 +204,16 @@ The multicast discovery plugin was removed from Elasticsearch 5, so discovery is
 
 If your hosting provider allows it, activate the Jumbo frames on your network interfaces. Jumbo frames might reduces the network latency by about 15% which is noticeable when transferring large amount of data.
 
-```
+```bash
 ifconfig eth0 mtu 9000
 ```
 
 Elasticsearch comes with some interesting network related settings, which are low by default and won't go over 2Gb/s, notably the recovery transfer which is limited to 40mb/s
 
-```
-indices.recovery.max_bytes_per_sec: 2g
+```yaml
+indices:
+  recovery:
+    max_bytes_per_sec: "2g"
 ```
 
 Raise this value only if your storage can handle it while serving queries, indexing, and performing administrative tasks such as merges.
@@ -225,14 +236,20 @@ Depending on how many data nodes you can afford to lose, running many hosts with
 
 Elasticsearch comes with 2 storage related throttling protection. The first one limits the bandwidth of the storage you can use, and is as low as 10mb/s. You can change it in the nodes settings:
 
-```
-indices.store.throttle.max_bytes_per_sec: 2g
+```yaml
+indices:
+  store:
+    throttle:
+      max_bytes_per_sec: "2g"
 ```
 
 The second one prevents too many merges from happening, which slows down your indexing process. If you run bulk indexing or don't care about search speed, you can disable merge throttling entirely.
 
-```
-indices.store.throttle.type: "none"
+```yaml
+indices:
+  store:
+    throttle:
+      type: "none"
 ```
 
 ## Software
@@ -309,14 +326,15 @@ Let's say you have 20 data nodes, and 30 indices, you can create 3 zones. Alloca
 
 Every day, run a crontab to reallocate your indices to their new zone. For example, move a less accessed index into the "general" zone:
 
-```
-PUT /index/_settings
+```bash
+curl -XPUT "localhost:9200/index/_settings" -H 'Content-Type: application/json' -d '
 {
   "transient": {
     "cluster.routing.allocation.include._zone" : "general",
     "cluster.routing.allocation.exclude._zone" : "new,old"
   }
 }
+'
 ```
 
 ## Troubleshooting and scaling
@@ -348,8 +366,9 @@ The average time taken by your queries
 
 A good way to know which queries take the more time is by using Elasticsearch slow queries logs.
 
-```
-PUT /index/_settings {
+```bash
+curl -XPUT "localhost:9200/index/_settings" -H 'Content-Type: application/json' -d '
+{
   "index.search.slowlog.threshold.query.warn: 1s",
   "index.search.slowlog.threshold.query.info: 500ms",
   "index.search.slowlog.threshold.query.debug: 1500ms",
@@ -359,6 +378,7 @@ PUT /index/_settings {
   "index.search.slowlog.threshold.fetch.debug: 300ms",
   "index.search.slowlog.threshold.fetch.trace: 200ms"
 }
+'
 ```
 
 If you can't optimize your queries, then you'll have to add more resources or rewrite everything to better use Elasticsearch, or something else.
@@ -369,6 +389,6 @@ Memory management issues used to be my worst nightmare. Thankfully it's not anym
 
 If you experience multiple memory related crashes, make sure Elasticsearch dumps its memory when crashing. If you allocate 31GB to the heap you'll get 31GB dumps, so expand your filesystem accordingly, and activate memory dumps.
 
-```
+```bash
 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/srv/elasticsearch/heapdump.hprof
 ```

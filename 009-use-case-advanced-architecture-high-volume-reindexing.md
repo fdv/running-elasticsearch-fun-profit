@@ -98,13 +98,15 @@ Elasticseach and our indexes naming allows us to be lazy so we can watch more cu
 Every node in the cluster has the following configuration:
 
 ```yaml
-action.auto_create_index: +<mapping id 1>_*,+<mapping id 2>_*,-*
+action:
+  auto_create_index: "+<mapping id 1>_*,+<mapping id 2>_*,-*"
 ```
 
 And we create a template in Elasticsearch for every mapping we need.
 
 ```bash
-PUT /_template/template_<mapping id> {
+curl -XPUT "localhost:9200/_template/template_<mapping id>" -H 'Content-Type: application/json' -d '
+{
 	"template": "<mapping id>_*",
 	"settings": {
 		"number_of_shards": 1
@@ -116,6 +118,7 @@ PUT /_template/template_<mapping id> {
 		"add some json": "here"
 	}
 }
+'
 ```
 
 Every time the indexer tries to write into a not yet existing index, Elasticsearch creates it with the right mapping. That's the magic.
@@ -129,7 +132,10 @@ On Blink, 1,000,000 documents weight about 2GB so we're creating indexes with 1 
 Before reindexing a client, we run a small script to create the new indexes with the right amount of shards. Here's a simplified version without error management for your eyes only.
 
 ```bash
-curl -XPUT http://esnode01:9200/<new mapping id>_<dashboard id> -d '{ "settings.index.number_of_shards" : '$(( $(curl -XGET http://esnode01:9200/<old mapping id>_<dashboard_id>/_count | cut -f 2 -d : | cut -f 1 -d ",") / 5000000 + 1))'}'
+curl -XPUT "localhost:9200/<new mapping id>_<dashboard id>" -H 'Content-Type: application/json' -d '
+{ "settings.index.number_of_shards" : \'$(( $(curl -XGET "localhost:9200/<old mapping id>_<dashboard_id>/_count" | cut -f 2 -d : | cut -f 1 -d ",") / 5000000 + 1))\'
+}
+'
 ```
 
 Now we're able to reindex, except we didn't solve the CPU issue. That's where fun things start.
@@ -139,11 +145,13 @@ What we're going to do is to leverage Elasticsearch zone awareness to dedicate a
 First, let's kick out all the indexes from those nodes.
 
 ```bash
-PUT /_cluster/settings {
+curl -XPUT "localhost:9200/_cluster/settings" -H 'Content-Type: application/json' -d '
+{
 	"transient" : {
 		"cluster.routing.allocation.exclude._ip" : "<data node 1>,<data node 2>,<data node x>"
 	}
 }
+'
 ```
 
 Elasticsearch then moves all the data from these nodes to the remaining ones. You can also shutdown those nodes and wait for the indexes to recover but you might lose data.
@@ -151,7 +159,8 @@ Elasticsearch then moves all the data from these nodes to the remaining ones. Yo
 Then, for each node, we edit Elasticsearch configuration to assign these nodes to a new zone called *envrack* (fucked up in French). We put all these machines in the secondary data center to use the spare http query nodes for the indexing process.
 
 ```yaml
-node.zone: 'envrack'
+node:
+  zone: 'envrack'
 ```
 
 Then restart Elasticsearch so it runs with the new configuration.
@@ -159,9 +168,11 @@ Then restart Elasticsearch so it runs with the new configuration.
 We don't want Elasticsearch to allocate the existing indexes to the new zone when we bring back these nodes online, so we update these index settings accordingly.
 
 ```bash
-curl -XPUT http://esmaster01:9200/<old mapping id>_*/_settings -d '{
+curl -XPUT "localhost:9200/<old mapping id>_*/_settings" -H 'Content-Type: application/json' -d '
+{
 	"routing.allocation.exclude.zone" : "envrack"
-}';
+}
+'
 ```
 
 The same way, we don't want the new indexes to be allocated to the production zones, so we update the creation script.
@@ -176,13 +187,15 @@ if [ $counter -gt 5000000 ]; then
 	shards=$(( $counter / 5000000 + 1 ))
 fi
 
-curl -XPUT http://esnode01:9200/<new mapping id>_<dashboard id> -d '{
+curl -XPUT "localhost:9200/<new mapping id>_<dashboard id>" -H 'Content-Type: application/json' -d '
+{
 	"settings" : {
 		"index.number_of_shards" : '$counter',
 		"index.numer_of_replicas" : 0,
 		"routing.allocation.exclude.zone" : "barack,chirack"
 	}
 }
+'
 ```
 
 More readable than a oneliner isn't it?
@@ -201,13 +214,15 @@ Since we've set the new zone in the secondary data center, we update the http qu
 In the main data center:
 
 ```yaml
-node.zone: 'barack'
+node:
+  zone: "barack"
 ```
 
 And in the secondary:
 
 ```yaml
-node.zone: 'chirack'
+node:
+  zone: "chirack"
 ```
 
 Here's what our infrastructure looks like now.
@@ -264,19 +279,21 @@ Here, we:
 Once we've done with reindexing a client, we update Baldur to change the active indexes for that client. Then, we add a replica and move the freshly baked indexes inside the production zones.
 
 ```bash
-curl -XPUT [[http://esnode01:9200/]{.underline}](http://esnode01:9200/)<new mapping id>_<dashboard id> -d '{
+curl -XPUT "localhost:9200/<new mapping id>_<dashboard id>" -H 'Content-Type: application/json' -d '
+{
 	"settings" : {
 		"index.numer_of_replicas" : 1,
 		"routing.allocation.exclude.zone" : "envrack",
 		"routing.allocation.include.zone" : "barack,chirack"
 	}
 }
+'
 ```
 
 Now, we're ready to delete the old indexes for that client.
 
 ```bash
-curl -XDELETE http://esnode01:9200/<old mapping_id>_<dashboard id>
+curl -XDELETE "localhost:9200/<old mapping_id>_<dashboard id>"
 ```
 
 ---

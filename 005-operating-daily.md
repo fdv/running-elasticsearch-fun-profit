@@ -10,9 +10,9 @@ WIP, COVERS ELASTICSEARCH 5.5.x
 
 I often have to delete hundreds of indexes at once. Their name usually follow some patterns, which makes batch deletion easier.
 
-```
+```bash
 for index in $(curl -XGET esmaster:9200/_cat/indices | awk '/pattern/ {print $3}'); do 
-	curl -XDELETE esmaster:9200/$index?master_timeout=120s;
+	curl -XDELETE "localhost:9200/${index}?master_timeout=120s"
 done
 ```
 
@@ -22,9 +22,9 @@ Lucene, which powers Elasticsearch has a specific behavior when it comes to dele
 
 This snippet sorts your existing indexes by the number of deleted documents before it runs the optimize.
 
-```
+```bash
 for indice in $(CURL -XGET esmaster:9200/_cat/indices | sort -rk 7 | awk '{print $3}'); do
-	curl -XPOST http://esmaster:9200/${indice}/_optimize?max_num_segments=1; 
+	curl -XPOST "localhost:9200/${indice}/_optimize?max_num_segments=1"
 done
 ```
 
@@ -32,32 +32,37 @@ done
 
 Using rack awareness allows to split your replicated data evenly between hosts or data center. It's convenient to restart half of your cluster at once instead of host by host.
 
-```
-curl -XPUT 'host:9200/_cluster/settings' -d '{
+```bash
+curl -XPUT 'localhost:9200/_cluster/settings' -H 'Content-Type: application/json' -d '
+{
 	"transient" : {
 		"cluster.routing.allocation.enable": "none"
 	}
-}'
+}
+'
 
 for host in $(curl -XGET esmaster:9200/_cat/nodeattrs?attr | awk '/rack_id/ {print $2}'); do
-	ssh $host service elasticsearch restart
+	ssh ${host} service elasticsearch restart
 done
 
 sleep 60
 
-curl -XPUT 'host:9200/_cluster/settings' -d '{
+curl -XPUT -H 'Content-Type: application/json' "localhost:9200/_cluster/settings" -d '
+{
 	"transient" : {
 		"cluster.routing.allocation.enable": "all
 	}
-}'
+}
+'
 ```
 
 ### Optimize your cluster restart
 
 There's a simple way to accelerate your cluster restart. Once you've brought your masters back, run this snippet. Most of the options are self explanatory:
 
-```
-curl -XPUT 'host:9200/_cluster/settings -d '{
+```bash
+curl -XPUT 'localhost:9200/_cluster/settings" -H 'Content-Type: application/json' -d '
+{
 	"transient" : {
 		"cluster.routing.allocation.cluster_concurrent_rebalance": 20,
 		"indices.recovery.concurrent_streams": 20,
@@ -69,27 +74,32 @@ curl -XPUT 'host:9200/_cluster/settings -d '{
 		"cluster.routing.allocation.disk.watermark.high" : "98%",
 		"cluster.routing.allocation.enable": "primary"
 	}
-}'
+}
+'
 ```
 
 Then, once your cluster is back to yellow, run that one:
 
-```
-curl -XPUT 'http://escluster:9200/_cluster/settings' -d '{
+```bash
+curl -XPUT "localhost:9200/_cluster/settings" -H 'Content-Type: application/json' -d '
+{
 	"transient" : {
 		"cluster.routing.allocation.enable": "all"
 	}
-}'
+}
+'
 ```
 
 ### Remove data nodes from a cluster the safe way
 
-```
-curl -XPUT 'http://escluster:9200/_cluster/settings' -d '{
+```bash
+curl -XPUT "localhost:9200/_cluster/settings" -H 'Content-Type: application/json' -d '
+{
 	"transient" : {
 		"cluster.routing.allocation.exclude._ip" : "<data node 1>,<data node 2>,<data node x>"
 	}
-}'
+}
+'
 ```
 
 ## Get useful information about your cluster
@@ -106,9 +116,12 @@ This snippet gets the most useful information from your Elasticsearch nodes:
 * file descriptors used
 * load
 
+```bash
+curl -XGET "localhost:9200/_cat/nodes?v&h=host,r,d,hc,rc,fdc,l"
 ```
-curl -XGET https://escluster/_cat/nodes?v&h=host,r,d,hc,rc,fdc,l
 
+Output:
+```
 host r d hc rc fdc l
 
 192.168.1.139 d 1tb 9.4gb 58.2gb 20752 0.20
@@ -123,14 +136,14 @@ Then, it's easy to sort the output to get interesting information.
 
 Sort by free disk space
 
-```
-curl -XGET https://escluster/_cat/nodes?h=host,r,d,hc,rc,fdc,l | sort -hrk 3
+```bash
+curl -XGET "localhost:9200/_cat/nodes?h=host,r,d,hc,rc,fdc,l" | sort -hrk 3
 ```
 
 Sort by heap occupancy:
 
-```
-curl -XGET https://escluster/_cat/nodes?h=host,r,d,hc,rc,fdc,l | sort -hrk 4
+```bash
+curl -XGET "localhost:9200/_cat/nodes?h=host,r,d,hc,rc,fdc,l" | sort -hrk 4
 ```
 
 And so on.
@@ -139,9 +152,9 @@ And so on.
 
 It's sometimes useful to know what happens on your data nodes search queues. Beyond the search thread pool(default thread pool being ((CPU * 3) / 2) + 1 on each data node, queries get stacked into the search queue, a 1000 buffer.
 
-```
+```bash
 while true; do 
-	curl -XGET 'host:9200/_cat/thread_pool?v&h=host,search.queue,search.active,search.rejected,search.completed' | sort -unk 2,3
+	curl -XGET "localhost:9200/_cat/thread_pool?v&h=host,search.queue,search.active,search.rejected,search.completed" | sort -unk 2,3
 	sleep 5
 done
 ```
@@ -152,17 +165,21 @@ That code snippet only displays the data node running active search queries so i
 
 This snippet gets most information you need about your indices. You can then grep on what you need to know: open, closed, green / yellow / red...
 
-```
-curl -XGET https://escluster/_cat/indices?v
+```bash
+curl -XGET "localhost:9200/_cat/indices?v"
 ```
 
 ### Shard allocation information
 
 Shards movement have lots of impact on your cluster performances. These snippets allows you to get the most critical information about your shards.
 
+```bash
+curl -XGET "localhost:9200/_cat/shards?v"
 ```
-curl -XGET https://escluster/_cat/shards?v
 
+Output:
+
+```
 17_20140829 4 r STARTED 2894319 4.3gb 192.168.1.208 esdata89
 17_20140829 10 p STARTED 2894440 4.3gb 192.168.1.206 esdata87
 17_20140829 10 r STARTED 2894440 4.3gb 192.168.1.199 esdata44
@@ -173,54 +190,54 @@ curl -XGET https://escluster/_cat/shards?v
 
 Recovery information comes under the form of a JSON output but it's still easy to read to understand what happens on your cluster.
 
-```
-curl -XGET https://escluster/_recovery?pretty&active_only
+```bash
+curl -XGET "localhost:9200/_recovery?pretty&active_only"
 ```
 
 ### Segments information (can be extremely verbose)
 
-```
-curl -XGET https://escluster/_cat/nodes?h=host,r,d,hc,rc,fdc,l | sort -hrk 3
+```bash
+curl -XGET "localhost:9200/_cat/nodes?h=host,r,d,hc,rc,fdc,l" | sort -hrk 3
 ```
 
 ### Cluster stats
 
-```
-curl -XGET https://escluster/_cluster/stats?pretty
+```bash
+curl -XGET "localhost:9200/_cluster/stats?pretty"
 ```
 
 ### Nodes stats
 
-```
-curl -XGET https://escluster/_nodes/stats?pretty
+```bash
+curl -XGET "localhost:9200/_nodes/stats?pretty"
 ```
 
 ### Indice stats
 
-```
-curl -XGET https://escluster/someindice/_stats?pretty
+```bash
+curl -XGET "localhost:9200/someindice/_stats?pretty"
 ```
 
 ### Indice mapping
 
-```
-curl -XGET https://escluster/someindice/_mapping
+```bash
+curl -XGET "localhost:9200/someindice/_mapping"
 ```
 
 ### Indice settings
 
-```
-curl -XGET https://escluster/someindice/_mapping/settings
+```bash
+curl -XGET "localhost:9200/someindice/_mapping/settings"
 ```
 
 ### Cluster dynamic settings
 
-```
-curl -XGET https://escluster/_cluster/settings
+```bash
+curl -XGET "localhost:9200/_cluster/settings"
 ```
 
 ### All the cluster settings (can be extremely verbose)
 
-```
-curl -XGET https://escluster/_settings
+```bash
+curl -XGET "localhost:9200/_settings"
 ```
