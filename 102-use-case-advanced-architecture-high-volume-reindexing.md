@@ -10,7 +10,7 @@ Reindexing that cluster was easy because it was not on production yet. Reindexin
 
 As you can see on the screenshot below, our main bottleneck the first time we reindexed Blackhole, the well named, was the CPU. Having the whole cluster at 100% and a load of 20 is not an option, so we need to find a workaround.
 
-![Cluster load on Marvel](images/009-advanced-architecture-high-volume-reindexing/image1.png)
+![Cluster load on Marvel](images/102-use-case-advanced-architecture-high-volume-reindexing/image1.png)
 
 This time, we won't reindex Blackhole but Blink. Blink stores the data we display in our clients dashboards. We need to reindex them every time we change the mapping to enrich that data and add new feature our clients and colleagues love.
 
@@ -26,7 +26,7 @@ Blink is a group of 3 clusters built around 27 physical hosts each, having 64GB 
 
 The data nodes have 4*800GB SSD drives in RAID0, about 58TB per cluster. The data and nodes are configured with Elasticsearch zones awareness. With 1 replica for each index, that makes sure we have 100% of the data in each data center so we're crash proof.
 
-![Blink Architecture](images/009-advanced-architecture-high-volume-reindexing/image2.png)
+![Blink Architecture](images/102-use-case-advanced-architecture-high-volume-reindexing/image2.png)
 
 We didn't allocate the http query nodes to a specific zone for a reason: we want to use the whole cluster when possible, at the cost of 1.2ms of network latency. From [Elasticsearch documentation](https://www.elastic.co/guide/en/elasticsearch/reference/current/allocation-awareness.html):
 
@@ -51,7 +51,7 @@ backend be_blink01
 
 So our infrastructure diagram becomes:
 
-![Blink infrastructure with datacenter awareness](images/009-advanced-architecture-high-volume-reindexing/image3.png)
+![Blink infrastructure with datacenter awareness](images/102-use-case-advanced-architecture-high-volume-reindexing/image3.png)
 
 In front of the Haproxy, we have an applicative layer called Baldur. Baldur was developed by my colleague [Nicolas Bazire](https://github.com/nicbaz) to handle multiple versions of a same Elasticsearch index and route queries amongst multiple clusters.
 
@@ -85,7 +85,7 @@ So the API knows which index it should use as active.
 
 Just like the load balancers, Baldur holds a VIP managed by another Keepalived, for fail over.
 
-![Cluster architecture with Baldur](images/009-advanced-architecture-high-volume-reindexing/image4.png)
+![Cluster architecture with Baldur](images/102-use-case-advanced-architecture-high-volume-reindexing/image4.png)
 
 ---
 
@@ -227,7 +227,7 @@ node:
 
 Here's what our infrastructure looks like now.
 
-![The final cluster](images/009-advanced-architecture-high-volume-reindexing/image5.png)
+![The final cluster](images/102-use-case-advanced-architecture-high-volume-reindexing/image5.png)
 
 It's now time to reindex.
 
@@ -274,7 +274,7 @@ Here, we:
 * read from the passive http query nodes. Since they're zone aware, they query the data in the same zone in priority
 * write on the data nodes inside the indexing zone so we won't load the nodes accessed by our clients
 
-![Reindexing with Baldur](images/009-advanced-architecture-high-volume-reindexing/image6.png)
+![Reindexing with Baldur](images/102-use-case-advanced-architecture-high-volume-reindexing/image6.png)
 
 Once we've done with reindexing a client, we update Baldur to change the active indexes for that client. Then, we add a replica and move the freshly baked indexes inside the production zones.
 
