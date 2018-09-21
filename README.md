@@ -16,6 +16,11 @@
 
 ---
 
+## Code of Conduct
+
+- Behave like normal, friendly, welcoming human beings or get the hell out.
+- Any reference to a non scientific, verifiable element is irrelevant.
+
 ## TOC
 
 - [Getting Started with Elasticsearch](001-getting-started.md)
