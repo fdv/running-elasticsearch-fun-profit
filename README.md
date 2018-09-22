@@ -32,6 +32,7 @@
     + [Ingest  nodes](001-getting-started.md/#ingest--nodes)
     + [Data Nodes](001-getting-started.md/#data-nodes)
     + [Tribe Nodes](001-getting-started.md/#tribe-nodes)
+    + [A Minimal, Fault Tolerant Elasticsearch Cluster](001-getting-started.md/#a-minimal--fault-tolerant-elasticsearch-cluster)
   * [What's an Elasticsearch index](001-getting-started.md/#what-s-an-elasticsearch-index)
   * [Deploying your first Elasticsearch cluster](001-getting-started.md/#deploying-your-first-elasticsearch-cluster)
     + [Deploying Elasticsearch on Debian](001-getting-started.md/#deploying-elasticsearch-on-debian)
