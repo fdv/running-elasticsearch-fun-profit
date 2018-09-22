@@ -37,15 +37,27 @@ A REST API is an application program interface (API) that uses HTTP requests to 
 
 ## What's an Elasticsearch cluster?
 
-An Elasticsearch cluster is a node or a group of nodes filling the following roles:
+A cluster is a host or a group of hosts running Elasticsearch and configured with the same `cluster name`.  The default `cluster name` is `elasticsearch` but using it in production is not recommended.
 
-Master node: the master node controls the cluster. It gives joining nodes informations about the cluster, decides where the data is located, and decides to reallocate the missing data when a node leaves. When multiple nodes can handle the master role, Elasticsearch chooses an elected master. When the elected master leaves the cluster, another master node takes over the role of elected master.
+Each host in an Elasticsearch cluster can fulfill one or multiple roles in the following: 
 
-HTTP nodes: Elasticsearch provides a REST API for indexing, querying and administrating the cluster. Elasticsearch REST API listens on port 9200.
+### Master node
 
-Data nodes: Nodes where the data is stored. Data nodes are responsible for managing stored data, and performing operations on that data when queried.
+The master nodes control the cluster. They gives joining nodes informations about the cluster, decides where to move the data, and reallocates the missing data when a node leaves. When multiple nodes can handle the master role, Elasticsearch elects an acting master. The acting master is called `elected master` When the elected master leaves the cluster, another master node takes over the role of elected master.
 
-A single node can fulfil every required role, at the cost of fault tolerance and horizontal scaling.
+### Ingest  nodes
+
+An ingest node pre-processs documents before the actual document indexing happens. The ingest node intercepts bulk and index requests, it applies transformations, and it then passes the documents back to the index or bulk APIs. 
+
+All nodes enable ingest by default, so any node can handle ingest tasks. You can also create dedicated ingest nodes.
+
+### Data Nodes
+
+Data nodes store the indexed data. They are responsible for managing stored data, and performing operations on that data when queried.
+
+### Tribe Nodes
+
+Tribe nodes connect to multiple Elasticsearch clusters and performs operations such as search accross every connected clusters.
 
 TODO: [add a cluster schema](https://github.com/fdv/running-elasticsearch-fun-profit/issues/7)
 
