@@ -21,9 +21,11 @@
 - Behave like normal, friendly, welcoming human beings or get the hell out.
 - Any reference to a non scientific, verifiable element is irrelevant.
 
+---
+
 ## TOC
 
-- [Getting Started with Elasticsearch](001-getting-started.md)
+- [Getting Started with Elasticsearch](001-getting-started.md/#getting-started-with-elasticsearch)
   * [Elasticsearch basic concepts](001-getting-started.md/#elasticsearch-basic-concepts)
   * [What's an Elasticsearch cluster?](001-getting-started.md/#what-s-an-elasticsearch-cluster-)
   * [What's an Elasticsearch index](001-getting-started.md/#what-s-an-elasticsearch-index)
@@ -31,6 +33,8 @@
     + [Deploying Elasticsearch on Debian](001-getting-started.md/#deploying-elasticsearch-on-debian)
     + [Deploying Elasticsearch on RHEL / CentOS](001-getting-started.md/#deploying-elasticsearch-on-rhel---centos)
   * [First step using Elasticsearch](001-getting-started.md/#first-step-using-elasticsearch)
+  * [Elasticsearch Configuration](001-getting-started.md/#elasticsearch-configuration)
+  * [Elasticsearch Plugins](001-getting-started.md/#elasticsearch-plugins)
 
 - [Elasticsearch and the Java Virtual Machine](002-elasticsearch-and-the-jvm.md/#elasticsearch-and-the-java-virtual-machine)
   * [Supported JVM and operating systems / distributions](002-elasticsearch-and-the-jvm.md/#supported-jvm-and-operating-systems---distributions)

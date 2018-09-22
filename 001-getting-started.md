@@ -23,7 +23,7 @@ Elasticsearch is a distributed, scalable, fault tolerant open source search engi
 
 - Distributed: Elasticsearch runs on as many hosts as required by the workload or the amount of data. Hosts communicate and synchronise using messages over the network using port 9300. A networked machine running Elasticsearch is called a node, and the whole group of nodes sharing the same cluster name is called a cluster.
 - Scalable: Elasticsearch scales horizontally. Horizontal scaling means that the cluster can grow by adding new nodes without restarting the cluster. When a new node joins the cluster, it gets a part of the existing data. Horizontal scaling is the opposite of vertical scaling, where the only way to grow is running a software on a bigger machine.
-- Fault tolerant: Elasticsearch ensures the data is replicated at least once - unless specified - on 2 separate nodes. When a node leaves the cluster, Elasticsearch rebuilds the replication on the remaining nodes, unless there\'s no more node to replicate to.
+- Fault tolerant: Elasticsearch ensures the data is replicated at least once - unless specified - on 2 separate nodes. When a node leaves the cluster, Elasticsearch rebuilds the replication on the remaining nodes, unless there's no more node to replicate to.
 
 ---
 
@@ -39,13 +39,13 @@ Data nodes: Nodes where the data is stored. Data nodes are responsible for manag
 
 A single node can fulfil every required role, at the cost of fault tolerance and horizontal scaling.
 
-TODO: add a cluster schema
+TODO: [add a cluster schema](https://github.com/fdv/running-elasticsearch-fun-profit/issues/7)
 
 ---
 
 ## What's an Elasticsearch index
 
-TODO
+TODO [issue #8](https://github.com/fdv/running-elasticsearch-fun-profit/issues/8)
 
 ---
 
@@ -53,14 +53,24 @@ TODO
 
 ### Deploying Elasticsearch on Debian
 
-TODO
+TODO [issue #9](https://github.com/fdv/running-elasticsearch-fun-profit/issues/9)
 
 ### Deploying Elasticsearch on RHEL / CentOS
 
-TODO
+TODO [issue #9](https://github.com/fdv/running-elasticsearch-fun-profit/issues/9)
 
 ---
 
 ## First step using Elasticsearch
 
-TODO
+TODO [issue #10](https://github.com/fdv/running-elasticsearch-fun-profit/issues/10)
+
+---
+
+## Elasticsearch Configuration
+
+TODO [issue #10](https://github.com/fdv/running-elasticsearch-fun-profit/issues/0)
+
+## Elasticsearch Plugins
+
+TODO [issue #10](https://github.com/fdv/running-elasticsearch-fun-profit/issues/10)
