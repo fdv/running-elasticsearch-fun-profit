@@ -4,14 +4,16 @@ WIP, COVERS ELASTICSEARCH 5.5.x
 
 # Getting Started with Elasticsearch
 
-This chapter is for people who have never deployed an Elasticsearch cluster before. It provides a quick step by step hands on and explains Elasticsearch basic concepts before going further into reading this book. Most of these concepts will be detailed further in this book.
+This chapter is for people who have never used Elasticsearch cluster. It explains Elasticsearch basic concepts and guides you into deploying your first cluster. Most of these concepts will be detailed further in this book.
 
 In this introduction chapter you will learn:
 
-- The basic concepts behind Elasticsearch.
-- What's in an Elasticsearch cluster.
-- How to deploy your first Elasticsearch cluster.
-- How to use Elasticsearch to index and find documents.
+- The basic concepts behind Elasticsearch
+- What's in an Elasticsearch cluster
+- How to deploy your first Elasticsearch cluster
+- How to use Elasticsearch to index and find content
+- Elasticsearch configuration basics
+- What's an Elasticsearch plugin and how to use them
 
 ---
 
