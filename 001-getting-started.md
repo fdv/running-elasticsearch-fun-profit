@@ -19,11 +19,19 @@ In this introduction chapter you will learn:
 
 ## Elasticsearch basic concepts
 
-Elasticsearch is a distributed, scalable, fault tolerant open source search engine written in Java. The project is lead by Elastic, a company created by Shay Banon, who created Elasticsearch on top of Lucene.
+Elasticsearch is a distributed, scalable, fault tolerant open source search engine written in Java. It provides a powerful REST API both for adding or searching data and updating the configuration. Elasticsearch is led by Elastic, a company created by Shay Banon, who started the project on top of Lucene.
 
-- Distributed: Elasticsearch runs on as many hosts as required by the workload or the amount of data. Hosts communicate and synchronise using messages over the network using port 9300. A networked machine running Elasticsearch is called a node, and the whole group of nodes sharing the same cluster name is called a cluster.
-- Scalable: Elasticsearch scales horizontally. Horizontal scaling means that the cluster can grow by adding new nodes without restarting the cluster. When a new node joins the cluster, it gets a part of the existing data. Horizontal scaling is the opposite of vertical scaling, where the only way to grow is running a software on a bigger machine.
-- Fault tolerant: Elasticsearch ensures the data is replicated at least once - unless specified - on 2 separate nodes. When a node leaves the cluster, Elasticsearch rebuilds the replication on the remaining nodes, unless there's no more node to replicate to.
+Open source means that Elasticsearch source code, the recipe to build the software, is public, free, and that anyone can contribute to the project by adding missing feature, documentation or fixing bugs. If accepted by the project, their work is then available to the whole commnunity. Because Elasticsearch is open source, the company behind it can go bankrupt or stop maintaining the project without killing it. Someone else will be able to take over it and keep the project alive.
+
+Java is a programming language created in 1995 by Sun Microsystems. Java applications runs on the top of the Java Virtual Machine (JVM), which means that it is independant of the platform it has been written on. Java is most well known for its Garbage Collector (GC), a powerful way to manage memory.
+
+Distributed: Elasticsearch runs on as many hosts as required by the workload or the amount of data. Hosts communicate and synchronise using messages over the network. A networked machine running Elasticsearch is called a node, and the whole group of nodes sharing the same cluster name is called a cluster.
+
+Scalable: Elasticsearch scales horizontally. Horizontal scaling means that the cluster can grow by adding new nodes. When adding more machines, you don't need to restart the whole cluster. When a new node joins the cluster, it gets a part of the existing data. Horizontal scaling is the opposite of vertical scaling, where the only way to grow is running a software on a bigger machine.
+
+Fault tolerant: Elasticsearch ensures the data is replicated at least once - unless specified - on 2 separate nodes. When a node leaves the cluster, Elasticsearch rebuilds the replication on the remaining nodes, unless there's no more node to replicate to.
+
+A REST API is an application program interface (API) that uses HTTP requests to GET, PUT, POST and DELETE data. An API for a website is code that allows two software programs to communicate with each another. The API spells out the proper way for a developer to write a program requesting services from an operating system or other application. REST is the Web counterpart of databases CRUD (Create, Read, Update, Delete).
 
 ---
 
