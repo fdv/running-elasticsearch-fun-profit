@@ -166,15 +166,14 @@ The migration processes were running on 8 virtual machines with 4 core and 8GB R
 
 During the second part, we merged the data from the Kafka with data from 2 other Galera clusters and an Elasticsearch cluster before pushing them into Blackhole.
 
-![Blackhole initial migration](images/100-use-cases-reindexing-36-billion-docs/image7.png)
+![Blackhole initial migration](images/100-use-cases-reindexing-36-billion-docs/image7.svg)
 
 ## Blackhole initial migration
 
 The merge and indexing parts took place on 8 virtual machines, each having 4 core and 8GB RAM. Each machine was running 8 indexing processes reading an offset of a Kafka partition.
 
 The indexer was shard aware. It had a mapping between the index it was writing on, its shards and the data node they were hosted on. This allowed to index directly on the right data nodes with the lowest possible network latency.
-
-![Blackhole sharding](images/100-use-cases-reindexing-36-billion-docs/image8.png)
+![Blackhole sharding](images/100-use-cases-reindexing-36-billion-docs/image8.svg)
 
 This part was not as smooth as we expected.
 

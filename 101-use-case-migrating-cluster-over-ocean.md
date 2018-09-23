@@ -27,7 +27,7 @@ Once the cluster was all green, I could shutdown the second Canadian node, then 
 
 You may have noticed that at that time, routing nodes were still in Canada, and data in France.
 
-![Cluster Topology](images/101-use-case-migrating-cluster-over-ocean/image2.png)
+![Cluster Topology](images/101-use-case-migrating-cluster-over-ocean/image2.svg)
 
 That's right. The latest part of it was playing with DNS.
 
