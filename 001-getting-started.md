@@ -69,7 +69,7 @@ A minimal fault tolerant Elasticsearch cluster should be composed of:
 
 Having 3 master nodes is important to make sure that the cluster won't be in a state of split brain in case of network separation, by making sure that there are at least 2 eligible master nodes present in the cluster. If the number of eligible master nodes falls behind 2, then the cluster will refuse any new indexing until the problem is fixed. 
 
-![A Minimal Elasticsearch cluster](images/001-getting-started/image1.png)
+![A Minimal Elasticsearch cluster](images/001-getting-started/image1.svg)
 
 ---
 

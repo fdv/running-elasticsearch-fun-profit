@@ -23,8 +23,7 @@ The average cluster stats are 85k writes / second, with 1.5M in peak, and 800 re
 Blackhole is a 77 nodes cluster, with 200TB storage, 4.8TB RAM, 2.4TB being allocated to Java, and 924 CPU core. It is made of 3 master nodes, 6 ingest nodes, and 68 data nodes. The cluster holds 1137 indices, with 13613 primary shards, and 1 replica, for 201 billion documents. It gets about 7000 new documents / second, with an average of 800 searches / second on the whole dataset.
 
 Blackhole data nodes are spread between 2 data center. By using rack awareness, we make sure that each data center holds 100% of the data, for high availability. Ingest nodes are rack aware as well, to leverage Elasticsearch prioritising nodes within the same rack when running a query. This allows us to minimise the latency when running a query. A Haproxy controls both the ingest nodes health and proper load balancing amongst all of them.
-
-![Blackhole rack awareness design](images/103-use-case-migrating-130tb-cluster-without-downtime/image16.png)
+![Blackhole rack awareness design](images/103-use-case-migrating-130tb-cluster-without-downtime/image16.svg)
 
 Blackhole is feeding is a small part of a larger processing chain. After multiple enrichment and transformation, the data is pushed into a large Kafka queue. A working unit reads the Kafka queue and pushes the data into Blackhole.
 
@@ -97,8 +96,7 @@ The first migration step was throwing more hardware at blackhole.
 We added 90 new servers, split in 2 data centers. Each server has a 6 core Xeon E5--1650v3 CPU, 64GB RAM, and 2 * 1.2TB NVME drives, setup as a RAID0. These servers were set up to use a dedicated network range as we planned to use them to replace the old Blackhole cluster and didn't want to mess with the existing IP addresses.
 
 These servers were deployed with a Debian Stretch and Elasticsearch 2.3. We had some issues as Elasticsearch 2 systemd scripts don't work on Stretch, so we had to run the service manually. We configured Elasticsearch to use 2 new racks, Barack and Chirack. Then, we updated the replication factor to 3.
-
-![Blackhole, expanded](images/103-use-case-migrating-130tb-cluster-without-downtime/image18.png)
+![Blackhole, expanded](images/103-use-case-migrating-130tb-cluster-without-downtime/image18.svg)
 
 ```bash
 curl -XPUT "localhost:9200/*/_settings" -H 'Content-Type: application/json' -d '{
@@ -173,7 +171,7 @@ Thankfully, there's a trick for that.
 
 Elasticsearch provides a concept of zone, which can be combined with rack awareness for a better allocation granularity. For example, you can dedicate lot of hardware to the freshest, most frequently accessed content, less hardware to content accessed less frequently and even less hardware to content that is never accessed. Zones are configured on the host level.
 
-![Zone configuration](images/103-use-case-migrating-130tb-cluster-without-downtime/image20.png)
+![Zone configuration](images/103-use-case-migrating-130tb-cluster-without-downtime/image20.svg)
 
 We decided to create a zone that would only hold the data of the day, so the hardware would be less stressed by the migration.
 
@@ -236,8 +234,7 @@ curl -XPUT "localhost:9200/_cluster/settings" -H 'Content-Type: application/json
 ```
 
 Then, we shat down Elasticsearch on Barack, Chirack and one of the cluster master nodes.
-
-![Moving from zone to zone](images/103-use-case-migrating-130tb-cluster-without-downtime/image21.png)
+![Moving from zone to zone](images/103-use-case-migrating-130tb-cluster-without-downtime/image21.svg)
 
 Removing nodes to create a new Blackhole
 
@@ -286,8 +283,7 @@ The last thing was to add a work unit to feed that Blackhole02 cluster and catch
 
 The whole migration took less than 20 hours, including transferring 130TB of data on a dual data center setup.
 
-![The migration](images/103-use-case-migrating-130tb-cluster-without-downtime/image22.png)
-
+![The migration](images/103-use-case-migrating-130tb-cluster-without-downtime/image22.svg)
 The most important point here was that we were able to rollback at any time, including after the migration if something was wrong on the application level.
 
 Deciding to double the cluster for a while was mostly a financial debate, but it had lots of pros, starting with the security it brought, as well as changing the whole hardware that had been running for 2 years.
