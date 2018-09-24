@@ -103,7 +103,8 @@ Having 3 master nodes is important to make sure that the cluster won't be in a s
 
 ## What's an Elasticsearch index
 
-TODO [issue #8](https://github.com/fdv/running-elasticsearch-fun-profit/issues/8)
+
+![Inside an Elasticsearch index](images/001-getting-started/image2.svg)
 
 ---
 
