@@ -27,7 +27,7 @@ Blackhole data nodes are spread between 2 data center. By using rack awareness, 
 
 Blackhole is feeding is a small part of a larger processing chain. After multiple enrichment and transformation, the data is pushed into a large Kafka queue. A working unit reads the Kafka queue and pushes the data into Blackhole.
 
-![Blackhole processing chain](images/103-use-case-migrating-130tb-cluster-without-downtime/image17.png)
+![Blackhole processing chain](images/103-use-case-migrating-130tb-cluster-without-downtime/image17.svg)
 
 This has many pros, the first one being to be able to replay a whole part of the process in case of error. The only con here is having enough disk space for the data retention, but in 2017 disk space is not a problem anymore, even on a 10s of TB scale.
 
