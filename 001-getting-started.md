@@ -43,7 +43,7 @@ Scalable: Elasticsearch scales horizontally. Horizontal scaling means that the c
 
 Fault tolerant: Elasticsearch ensures the data is replicated at least once - unless specified - on 2 separate nodes. When a node leaves the cluster, Elasticsearch rebuilds the replication on the remaining nodes, unless there's no more node to replicate to.
 
-A REST API is an application program interface (API) that uses HTTP requests to GET, PUT, POST and DELETE data. An API for a website is code that allows two software programs to communicate with each another. The API spells out the proper way for a developer to write a program requesting services from an operating system or other application. REST is the Web counterpart of databases CRUD (Create, Read, Update, Delete).
+A REST API is an application program interface (API) that uses HTTP requests to `GET`, `PUT`, `POST` and `DELETE` data. An API for a website is code that allows two software programs to communicate with each another. The API spells out the proper way for a developer to write a program requesting services from an operating system or other application. REST is the Web counterpart of databases CRUD (Create, Read, Update, Delete).
 
 ---
 
