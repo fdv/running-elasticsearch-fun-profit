@@ -103,7 +103,17 @@ Having 3 master nodes is important to make sure that the cluster won't be in a s
 
 ## What's an Elasticsearch index
 
-TODO [issue #8](https://github.com/fdv/running-elasticsearch-fun-profit/issues/8)
+An `index` is a group of documents that with similar characteristics. It is identified by a name which is used when performing operations against stored documents or the `index` structure itself. An `index` structure is defined by a `mapping`, a `JSON` file describing both the document characteristics and the `index` options such as the replication factor. In an Elasticsearch cluster, you can define as many `indexes` as you want.
+
+An Elasticsearch `index` is composed of 1 or multiple `shards`. A `shard` is a Lucene index, and the number of `shards` is defined at the `index` creation time.  Elasticsearch allocates an `index` `shards` accross the cluster, either automatically or according to user defined rules.
+
+Lucene is the name of the search engine that powers Elasticsearh. It is an open source project from the Apache Foundation. You most probably never hear about Lucene when operating an Elasticsearch cluster, but this book covers the basics you need to know.
+
+A `shard` is made of one or multiple `segments`, which are binary files where Lucene indexes the stored documents.
+
+![Inside an Elasticsearch index](images/001-getting-started/image2.svg)
+
+If you're familiar with relational databases such as MySQL, then an `index` is a database, the `mapping` is the database schema, and the shards represent the database data. Due to the distributed nature of Elasticsearch, and the specificities of Lucene, the comparison with a relational database stops here.
 
 ---
 

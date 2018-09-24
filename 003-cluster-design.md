@@ -82,6 +82,7 @@ Lucene is the name of the search engine that powers Elasticsearh. It is an open 
 ### Lucene segments
 
 Each Elasticsearch index is divided into shards. Shards are both logical and physical division of an index. Each Elasticsearch shard is a Lucene index. The maximum number of documents you can have in a Lucene index is 2,147,483,519. The Lucene index is divided into smaller files called segments. A segment is a small Lucene index. Lucene searches in all segments sequentially.
+
 ![Inside an Elasticsearch index](images/003-cluster-design/image2.svg)
 
 Lucene creates a segment when a new writer is opened, and when a writer commits or is closed. It means segments are immutable. When you add new documents into your Elasticsearch index, Lucene creates a new segment and writes it. Lucene can also create more segments when the indexing throughput is important.
