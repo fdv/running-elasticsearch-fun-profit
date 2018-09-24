@@ -166,14 +166,14 @@ The migration processes were running on 8 virtual machines with 4 core and 8GB R
 
 During the second part, we merged the data from the Kafka with data from 2 other Galera clusters and an Elasticsearch cluster before pushing them into Blackhole.
 
-![Blackhole initial migration](images/100-use-cases-reindexing-36-billion-docs/image7.svg)
+![Blackhole initial migration](images/image7.svg)
 
 ## Blackhole initial migration
 
 The merge and indexing parts took place on 8 virtual machines, each having 4 core and 8GB RAM. Each machine was running 8 indexing processes reading an offset of a Kafka partition.
 
 The indexer was shard aware. It had a mapping between the index it was writing on, its shards and the data node they were hosted on. This allowed to index directly on the right data nodes with the lowest possible network latency.
-![Blackhole sharding](images/100-use-cases-reindexing-36-billion-docs/image8.svg)
+![Blackhole sharding](images/image8.svg)
 
 This part was not as smooth as we expected.
 
@@ -183,7 +183,7 @@ Surprisingly, the main bottleneck was neither one of the Galera clusters nor the
 
 The other unexpected bottleneck was the CPU. Surprisingly, we were CPU bound but the disks were not a problem (which is normal since we're using SSDs).
 
-![Blackhole system load](images/100-use-cases-reindexing-36-billion-docs/image9.png)
+![Blackhole system load](images/image9.png)
 
 After 9 days, the data was fully indexed and we could start playing with the data.
 
@@ -209,7 +209,7 @@ Logstash has both an Elasticsearch input, for reading, an Elasticsearch output, 
 
 We ran a few tests on Blackhole to determine which configuration was the best, and ended with 5000 documents scrolls and 10 indexing workers.
 
-![Testing blackhole metrics](images/100-use-cases-reindexing-36-billion-docs/image10.png)
+![Testing blackhole metrics](images/image10.png)
 
 Testing with 5000 documents scroll and 10 workers
 
@@ -217,11 +217,11 @@ For these tests, we were running with a production configuration, which explains
 
 During the operation, both source and target nodes behaved without problems, specifically on the memory level.
 
-![Testing blackhole memory metrics](images/100-use-cases-reindexing-36-billion-docs/image11.png)
+![Testing blackhole memory metrics](images/image11.png)
 
 Source node for reindexing
 
-![Testing blackhole node behavior](images/100-use-cases-reindexing-36-billion-docs/image12.png)
+![Testing blackhole node behavior](images/image12.png)
 
 Target node behavior
 
@@ -354,15 +354,15 @@ Moulinette is the processing script. It's a small daemon written in Bash (with s
 
 Once again, the main problem was being CPU bound. As you can see on that Marvel screenshot, the cluster was put under heavy load during the whole indexing process. Considering that we were both reading and writing on the same cluster, **with an indexing rate over 90,000 documents per second with 140,000 documents per second peaks**, this is not surprising at all.
 
-![Reindexing blackhole, 2 days after](images/100-use-cases-reindexing-36-billion-docs/image13.png)
+![Reindexing blackhole, 2 days after](images/image13.png)
 
 Having a look at the CPU graphs, there was little we could to to improve the throughput without dropping Logstash and relying on a faster solution running on less nodes.
 
-![CPU usage](images/100-use-cases-reindexing-36-billion-docs/image14.png)
+![CPU usage](images/image14.png)
 
 The disks operations show well the scroll / index processing. There was certainly some latency inside Logstash for the transform process, but we didn't track it.
 
-![Disks operations](images/100-use-cases-reindexing-36-billion-docs/image15.png)
+![Disks operations](images/image15.png)
 
 The other problem was losing nodes. We had some hardware issues and lost some nodes here and there. This caused indexing from that node to crash and indexing to that node to stale since Logstash does not exit when the output endpoint crashes.
 

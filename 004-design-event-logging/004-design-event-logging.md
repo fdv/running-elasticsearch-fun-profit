@@ -63,7 +63,7 @@ index:
 
 If you start combining events analysis with alerting, or if you need your events to be searchable in realtime without downtime, then things get a bit more expensive. For example, you might want to correlate your whole platform auth.log to look for intrusion attempts or port scanning, so you can deploy new firewall rules accordingly. Then you'll have to start with a 3 nodes cluster. 3 nodes is a minimum since you need 2 active master nodes to avoid a split brain.
 
-![](images/004-design-event-logging/image6.svg)
+![](images/image6.svg)
 
 Here, the minimal hosts configuration for the master / http node is:
 
