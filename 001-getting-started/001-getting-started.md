@@ -89,7 +89,7 @@ Tribe nodes connect to multiple Elasticsearch clusters and performs operations s
 
 ### A Minimal, Fault Tolerant Elasticsearch Cluster
 
-![A Minimal Elasticsearch cluster](images/001-getting-started/image1.svg)
+![A Minimal Elasticsearch cluster](images/image1.svg)
 
 A minimal fault tolerant Elasticsearch cluster should be composed of:
 
@@ -111,7 +111,7 @@ Lucene is the name of the search engine that powers Elasticsearh. It is an open 
 
 A `shard` is made of one or multiple `segments`, which are binary files where Lucene indexes the stored documents.
 
-![Inside an Elasticsearch index](images/001-getting-started/image2.svg)
+![Inside an Elasticsearch index](images/image2.svg)
 
 If you're familiar with relational databases such as MySQL, then an `index` is a database, the `mapping` is the database schema, and the shards represent the database data. Due to the distributed nature of Elasticsearch, and the specificities of Lucene, the comparison with a relational database stops here.
 
@@ -137,7 +137,7 @@ TODO [issue #10](https://github.com/fdv/running-elasticsearch-fun-profit/issues/
 
 ## Elasticsearch Configuration
 
-TODO [issue #10](https://github.com/fdv/running-elasticsearch-fun-profit/issues/0)
+TODO [issue #10](https://github.com/fdv/running-elasticsearch-fun-profit/issues/10)
 
 ## Elasticsearch Plugins
 
