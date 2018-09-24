@@ -4,16 +4,28 @@ WIP, COVERS ELASTICSEARCH 5.5.x
 
 # Getting Started with Elasticsearch
 
-This chapter is for people who have never used Elasticsearch cluster. It explains Elasticsearch basic concepts and guides you into deploying your first cluster. Most of these concepts will be detailed further in this book.
+This chapter is for people who have not used Elasticsearch yet. It covers Elasticsearch basic concepts and guides you into deploying and using your first single node cluster. Every concept explained here are detailed further in this book.
 
 In this introduction chapter you will learn:
 
 - The basic concepts behind Elasticsearch
-- What's in an Elasticsearch cluster
-- How to deploy your first Elasticsearch cluster
-- How to use Elasticsearch to index and find content
+- What's an Elasticsearch cluster
+- How to deploy your first, single node Elasticsearch cluster on the most common operating systems
+- How to use Elasticsearch to index documents and find content
 - Elasticsearch configuration basics
 - What's an Elasticsearch plugin and how to use them
+
+---
+
+## Prerequisites
+
+In order to read this book and perform the operations described along its chapters, you need:
+
+- A machine or virtual machine running one of the popular Linux or Unix environments: Debian / Ubuntu, RHEL / CentOS or FreeBSD. Running Elasticsearch on Mac OS or Windows is not covered in this book
+- A basic knowledge of UNIX command line and the use of a terminal
+- Your favorite text editor
+
+If you have never used Elasticsearch before, I recommend to create a virtual machine so you won't harm your main system in case of mistake. You can either run it locally using a virtuzlization tool like [Virtualbox](https://www.virtualbox.org/) or on your favorite cloud provider.
 
 ---
 
