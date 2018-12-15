@@ -1,5 +1,5 @@
 ```
-WIP, COVERS ELASTICSEARCH 5.5.x
+WIP, COVERS ELASTICSEARCH 5.5.x, UPDATING TO ES 6.5.x
 ```
 
 # Elasticsearch and the Java Virtual Machine
@@ -12,29 +12,58 @@ The following matrices present the various operating systems and Java Virtual Ma
 
 ### Operating system matrix 
 
-|     | CentOS/RHEL 6.x/7.x | Oracle Enterprise Linux 6/7 with RHEL Kernel only | Ubuntu 14.04 | Ubuntu 16.04 | SLES 11 SP4\*\*/12 | openSUSE Leap 42 |
-| --- |:---:|:---:|:---:|:---:|:---:|:---:|
-| **ES 2.4.x** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| **ES 5.5.x** | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ |
-            
+|     | CentOS/RHEL 6.x/7.x | Oracle Enterprise Linux 6/7 with RHEL Kernel only | Ubuntu 14.04 | Ubuntu 16.04 | **Ubuntu 18.04** | SLES 11 SP4\*\*/12 | SLES 12 | openSUSE Leap 42 |
+| --- |:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| **ES 5.0.x** | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | ✅ |
+| **ES 5.1.x** | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | ✅ |
+| **ES 5.2.x** | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | ✅ |
+| **ES 5.3.x** | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | ✅ |
+| **ES 5.4.x** | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | ✅ |
+| **ES 5.5.x** | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | ✅ |
+| **ES 6.0.x** | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ |
+| **ES 6.1.x** | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ |
+| **ES 6.2.x** | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ |
+| **ES 6.3.x** | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ |
+| **ES 6.4.x** | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ |
+| **ES 6.5.x** | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ |
 
-|     | Windows Server 2012/R2 | Windows Server 2016 | Debian 7 | Debian 8 | Debian 9 | Amazon Linux |
-| --- |:---:|:---:|:---:|:---:|:---:|:---:|
-| **ES 2.4.x** | ✅ | ❌ | ✅ | ✅ | ❌ | ✅ |
-| **ES 5.5.x** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 
-Elasticsearch runs on both OpenSolaris and FreeBSD. FreeBSD 11.1 provides an Elasticsearch 5.3.0 package maintained by [Tom Judge](mailto:tj@freebsd.org), but neither of these operating systems are officially supported by Elastic.
+|     | Windows Server 2012/R2 | Windows Server 2016 | Debian 7 | Debian 8 | Debian 9 | **Solaris / SmartOS** | Amazon Linux |
+| --- |:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| **ES 5.0** | ✅ | ❌ | ✅ | ✅ | ❌ | ❌ | ✅ |
+| **ES 5.1.x** | ✅ | ❌ | ✅ | ✅ | ❌ | ❌ | ✅ |
+| **ES 5.2.x** | ✅ | ❌ | ✅ | ✅ | ❌ | ❌ | ✅ |
+| **ES 5.3.x** | ✅ | ❌ | ✅ | ✅ | ❌ | ❌ | ✅ |
+| **ES 5.4.x** | ✅ | ❌ | ✅ | ✅ | ❌ | ❌ | ✅ |
+| **ES 5.5.x** | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ |
+| **ES 6.0.x** | ✅ | ✅ | ❌ | ✅ | ✅ | ❌ | ✅ |
+| **ES 6.1.x** | ✅ | ✅ | ❌ | ✅ | ✅ | ❌ | ✅ |
+| **ES 6.2.x** | ✅ | ✅ | ❌ | ✅ | ✅ | ❌ | ✅ |
+| **ES 6.3.x** | ✅ | ✅ | ❌ | ✅ | ✅ | ❌ | ✅ |
+| **ES 6.4.x** | ✅ | ✅ | ❌ | ✅ | ✅ | ❌ | ✅ |
+| **ES 6.5.x** | ✅ | ✅ | ❌ | ✅ | ✅ | ❌ | ✅ |
+
+Elasticsearch runs on both OpenSolaris and FreeBSD. FreeBSD 11.1 provides an Elasticsearch 6.4.2 package maintained by [Mark Felder](mailto:feld@freebsd.org), but neither of these operating systems are officially supported by Elastic.
 
 ### Java Virtual Machine matrix
 
-|     | Oracle JVM 1.7u55+ | Oracle JVM 1.8u40+ | OpenJDK 1.7u55+ | OpenJDK 1.8u40+ | Other |
-| --- |:---:|:---:|:---:|:---:|:---:|
-| ES 2.4.x | ✅ | ✅ | ✅ | ✅ | ❌ |
-| ES 5.5.x | ❌ | ✅ | ❌ | ✅ | ✅ |
+|     | Oracle/OpenJDK 1.8.0u111+ | Oracle/OpenJDK 9 | OpenJDK 10 | OpenJDK 11 | Azul Zing 16.01.9.0+ | IBM J9 |
+| --- |:---:|:---:|:---:|:---:|:---:| --- |
+| **ES 5.0.x** | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
+| **ES 5.1.x** | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
+| **ES 5.2.x** | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
+| **ES 5.3.x** | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
+| **ES 5.4.x** | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
+| **ES 5.5.x** | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
+| **ES 5.6**.x | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
+| **ES 6.0.x** | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| **ES 6.1.x** | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| **ES 6.2.x** | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| **ES 6.3.x** | ✅ | ❌ | ✅ | ❌ | ❌ | ❌ |
+| **ES 6.4.x** | ✅ | ❌ | ✅ | ❌ | ❌ | ❌ |
+| **ES 6.5.x** | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
 
-Elasticsearch is affected by a segmentation fault on `nmethod::can_unload` when running on OpenJDK 1.7. There is no workaround but upgrading to OpenJDK 1.8.
 
-Elasticsearch does not support Java 1.9.
 
 ## Memory management
 

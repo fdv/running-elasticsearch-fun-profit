@@ -1,4 +1,6 @@
-**WIP, covers Elasticsearch 5.5.x**
+```
+WIP, COVERS ELASTICSEARCH 5.5.x, UPDATING TO ES 6.5.x
+```
 
 # Operating Elasticsearch
 ## for Fun and Profit

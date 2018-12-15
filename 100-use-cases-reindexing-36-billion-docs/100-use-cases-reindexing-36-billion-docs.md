@@ -1,5 +1,5 @@
 ```
-WIP, COVERS ELASTICSEARCH 5.5.x
+WIP, COVERS ELASTICSEARCH 5.5.x, UPDATING TO ES 6.5.x
 ```
 
 # Use Case: How we reindexed 36 billion documents in 5 days within the same Elasticsearch cluster
