@@ -1,3 +1,7 @@
+```
+WIP, COVERS ELASTICSEARCH 5.5.x, UPDATING TO ES 6.5.x
+```
+
 # Migrating a 130TB Cluster from Elasticsearch 2 to 5 in 20 Hours with 0 Downtime and a Rollback Strategy
 
 Do you remember [Blackhole, the 36 billion documents Elasticsearch cluster](https://thoughts.t37.net/how-we-reindexed-36-billions-documents-in-5-days-within-the-same-elasticsearch-cluster-cd9c054d1db8)we had to reindex a while ago? Blackhole is now a 130TB grownup with 100 billion documents, and my last task before I left Synthesio was migrating the little boy to Elasticsearch 5.1. This post is a more detailed version of the talk I gave November the 23rd at the ElasticFR meetup in Paris.

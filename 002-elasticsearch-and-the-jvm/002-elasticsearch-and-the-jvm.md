@@ -1,5 +1,5 @@
 ```
-WIP, COVERS ELASTICSEARCH 5.5.x
+WIP, COVERS ELASTICSEARCH 5.5.x, UPDATING TO ES 6.5.x
 ```
 
 # Elasticsearch and the Java Virtual Machine
