@@ -28,11 +28,11 @@ Monitoring the at the cluster level: [https://grafana.com/dashboards/3592](https
 
 ![](images/image8.png)
 
-Monitoring at the node level: [https://grafana.com/dashboards/3592](https://grafana.com/dashboards/3592)
+Monitoring at the node level: [https://grafana.com/dashboards/3595](https://grafana.com/dashboards/3595)
 
 ![](images/image9.png)
 
-Monitoring at the index level: [https://grafana.com/dashboards/3592](https://grafana.com/dashboards/3592)
+Monitoring at the index level: [https://grafana.com/dashboards/3598](https://grafana.com/dashboards/3598)
 
 ![](images/image10.png)
 
