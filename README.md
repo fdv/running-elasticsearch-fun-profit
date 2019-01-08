@@ -122,7 +122,7 @@ WIP, COVERS ELASTICSEARCH 5.5.x, UPDATING TO ES 6.5.x
   * [Monitoring at the host level](007-monitoring-es/007-monitoring-es.md/#monitoring-at-the-host-level)
   * [Monitoring at the node level](007-monitoring-es/007-monitoring-es.md/#monitoring-at-the-node-level)
   * [Monitoring at the cluster level](007-monitoring-es/007-monitoring-es.md/#monitoring-at-the-cluster-level)
-  * [Monitoring at the index level](007-monitoring-es/007-monitoring-es.md/#monitoring-at-the-index-level)](
+  * [Monitoring at the index level](007-monitoring-es/007-monitoring-es.md/#monitoring-at-the-index-level)
 
 - [How we reindexed 36 billion documents in 5 days within the same Elasticsearch cluster](100-use-cases-reindexing-36-billion-docs/100-use-cases-reindexing-36-billion-docs.md/#how-we-reindexed-36-billion-documents-in-5-days-within-the-same-elasticsearch-cluster)
   * [The "Blackhole" cluster](100-use-cases-reindexing-36-billion-docs/100-use-cases-reindexing-36-billion-docs.md/#the--blackhole--cluster)
