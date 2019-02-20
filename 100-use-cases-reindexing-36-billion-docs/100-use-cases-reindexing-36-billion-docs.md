@@ -4,7 +4,7 @@ WIP, COVERS ELASTICSEARCH 5.5.x, UPDATING TO ES 6.5.x
 
 # Use Case: How we reindexed 36 billion documents in 5 days within the same Elasticsearch cluster
 
-At [Synthesio](http://www.synthesio.com/), we use [ElasticSearch](http://elastic.co/) at various places to run complex queries that fetch up to 50 million rich documents out of tens of billion in the blink of an eye. Elasticsearch makes it fast and easily scalable where running the same queries over multiple MySQL clusters would take minutes and crash a few servers on the way. Every day, we push Elasticsearch boundaries further, and going deeper and deeper in its internals leads to even more love.
+At [Synthesio](http://www.synthesio.com/), we use [ElasticSearch](http://elastic.co/) at various places to run complex queries that fetch up to 50 million rich documents out of tens of billions in the blink of an eye. Elasticsearch makes it fast and easily scalable where running the same queries over multiple MySQL clusters would take minutes and crash a few servers on the way. Every day, we push Elasticsearch boundaries further, and going deeper and deeper in its internals leads to even more love.
 
 Last week, we decided to reindex a 136TB dataset with a brand new mapping. Updating an Elasticsearch mapping on a large index is easy until you need to change an existing field type or delete one. Such updates require a complete reindexing in a separate index created with the right mapping so there was no easy way out for us.
 
@@ -12,9 +12,9 @@ Last week, we decided to reindex a 136TB dataset with a brand new mapping. Upda
 
 ## The "Blackhole" cluster
 
-We've called our biggest Elasticsearch cluster "Blackhole", because that's exactly what it is: a hot, ready to use datastore being able to contain virtually any amount of data. The only difference with a real blackhole is that we can get our data back at the speed of light.
+We've called our biggest Elasticsearch cluster "Blackhole" because that's exactly what it is: a hot, ready to use datastore being able to contain virtually any amount of data. The only difference to a real black hole is that we can get our data back at the speed of light.
 
-When we designed blackhole, we had to chose between 2 different models.
+When we designed blackhole, we had to choose between 2 different models.
 
 A few huge machines with 4 * 12 core CPU, 512GB of memory and 36 800GB SSD drives, each of them running multiple instances of Elasticsearch.
 
@@ -24,19 +24,19 @@ We opted for the latter since it would make scaling much easier and didn't requi
 
 Blackhole runs on 75 physical machines:
 
-* 2 http nodes, one in each data center behind a [HAProxy](http://www.haproxy.org/) to load balance the queries.
+* 2 http nodes, one in each data center behind an [HAProxy](http://www.haproxy.org/) to load balance the queries.
 * 3 master nodes located in 3 different data center.
 * 70 data nodes into 2 different data center.
 
-Each node has quad core Xeon D-1521 CPU running at 2.40GHz and 64GB of memory. The data nodes have a RAID0 over 4*800GB SSD drives with XFS. The whole cluster runs a Systemd less Debian Jessie with a 3.14.32 vanilla kernel. The current version of the cluster has 218,75TB of storage and 4,68TB of memory with 2.39TB being allocated to Elasticsearch heap. That's all for the numbers.
+Each node has quad-core Xeon D-1521 CPU running at 2.40GHz and 64GB of memory. The data nodes have a RAID0 over 4*800GB SSD drives with XFS. The whole cluster runs a systemd-less Debian Jessie with a 3.14.32 vanilla kernel. The current version of the cluster has 218,75TB of storage and 4,68TB of memory with 2.39TB being allocated to Elasticsearch heap. That's all for the numbers.
 
 ---
 
 ## Elasticsearch configuration
 
-Blackhole runs ElasticSearch 1.7.5 on Java 1.8. Indexes have 12 shards and 1 replica. We ensure each data center hosts 100% of our data using Elasticsearch [rack awareness](https://www.elastic.co/guide/en/elasticsearch/reference/current/allocation-awareness.html) feature. This setup allows to crash a whole data center without neither data loss nor downtime, which we test every month.
+Blackhole runs ElasticSearch 1.7.5 on Java 1.8. Indexes have 12 shards and 1 replica. We ensure each data center hosts 100% of our data using Elasticsearch [rack awareness](https://www.elastic.co/guide/en/elasticsearch/reference/current/allocation-awareness.html) feature. This setup allows crashing a whole data center without neither data loss nor downtime, which we test every month.
 
-All the filtered queries are ran with `_cache=false` ElasticSearch caches the filtered queries result in memory, making the whole cluster explode at the first search. Running queries on 100GB shards, this is not something you want to see.
+All the filtered queries are run with `_cache=false` ElasticSearch caches the filtered queries result in memory, making the whole cluster explode at the first search. Running queries on 100GB shards, this is not something you want to see.
 
 When running in production, our configuration is:
 
@@ -128,9 +128,9 @@ The reason why we decided to go with niofs is to let the kernel manage the file 
 
 ---
 
-## Tuning the Java virtual machine
+## Tuning the Java Virtual Machine
 
-We launch the java virtual machine with `-Xms31g -Xmx31g`. Combined with ElasticSearch `mlockall=true`, it ensures ElasticSearch gets enough memory to run and never swaps. The remaining 33GB are used for ElasticSearch threads and file system cache.
+We launch the Java Virtual Machine with `-Xms31g -Xmx31g`. Combined with ElasticSearch `mlockall=true`, it ensures ElasticSearch gets enough memory to run and never swaps. The remaining 33GB are used for ElasticSearch threads and file system cache.
 
 Despite ElasticSearch recommendations we have replaced the [Concurrent Mark Sweep](https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/cms.html) (CMS) garbage collector with the [Garbage First Garbage Collector](http://www.oracle.com/technetwork/tutorials/tutorials-1876574.html) (G1GC). With CMS, we would run into a stop the world garbage collection for every single query on more than 1 month of data.
 
@@ -162,7 +162,7 @@ For this initial indexing, we decided to go with 1 index per month and 30 shards
 
 The first part of the process took 10 days. We had to fetch 30 billion documents from our main [Galera](http://galeracluster.com/products/) datastore, turn it into JSON and push it into a [Kafka](https://kafka.apache.org/) queue, each month of data being pushed into a different Kafka partition. Since we were scanning the database incrementally, the process went pretty fast considering the amount of data we were processing.
 
-The migration processes were running on 8 virtual machines with 4 core and 8GB RAM. Each machine was running a 8 processes of a [Scala](http://www.scala-lang.org/) homemade program.
+The migration processes were running on 8 virtual machines with 4 core and 8GB RAM. Each machine was running 8 processes of a [Scala](http://www.scala-lang.org/) homemade program.
 
 During the second part, we merged the data from the Kafka with data from 2 other Galera clusters and an Elasticsearch cluster before pushing them into Blackhole.
 
@@ -172,7 +172,7 @@ During the second part, we merged the data from the Kafka with data from 2 other
 
 The merge and indexing parts took place on 8 virtual machines, each having 4 core and 8GB RAM. Each machine was running 8 indexing processes reading an offset of a Kafka partition.
 
-The indexer was shard aware. It had a mapping between the index it was writing on, its shards and the data node they were hosted on. This allowed to index directly on the right data nodes with the lowest possible network latency.
+The indexer was shard aware. It had a mapping between the index it was writing on, its shards, and the data node they were hosted on. This allowed indexing directly on the right data nodes with the lowest possible network latency.
 ![Blackhole sharding](images/image8.svg)
 
 This part was not as smooth as we expected.
@@ -195,7 +195,7 @@ When we decided to change Blackhole mapping, we had enough experience with the c
 
 Instead of monthly indexes, we decided to split the cluster into daily indexes. A few tests on a migrating index showed it was the way to go.
 
-With the new mapping dropping a bunch of data, we moved from 3GB for 1 million documents (with a replica) to 2GB for 1 million documents. Going daily reduced the average index from 3TB to 120GB, and a single shard from 100GB to 10GB. Having a large number of machines, this allowed to better use the ressources, starting with the JVM heap, running parallel queries.
+With the new mapping dropping a bunch of data, we moved from 3GB for 1 million documents (with a replica) to 2GB for 1 million documents. Going daily reduced the average index from 3TB to 120GB, and a single shard from 100GB to 10GB. Having a large number of machines, this allowed to better use the resources, starting with the JVM heap, running parallel queries.
 
 ### The reindexing process
 
@@ -203,17 +203,17 @@ Instead of polling the data from our database clusters, we decided to reuse the 
 
 This time, we did not use separate virtual machines to host the indexing processes. Instead, we decided to run the indexers on the data nodes, read locally and write on their counterpart in the secondary data center. Considering a 10Gb link and a 46ms network latency, that solution was acceptable. It meant we had 70 machines to both read and write to, allowing maximum parallelism.
 
-There are many solutions to copy an Elasticsearch index to another, but most of them neither allow splitting one to many or change the data model. Unfortunately, the new mapping involved deleting some fields and moving other fields somewhere else. Since we did not have the time to build a homemade solution, we decided to go with [Logstash](https://www.elastic.co/products/logstash).
+There are many solutions to copy an Elasticsearch index to another, but most of them neither allow splitting one-to-many or change the data model. Unfortunately, the new mapping involved deleting some fields and moving other fields somewhere else. Since we did not have the time to build a homemade solution, we decided to go with [Logstash](https://www.elastic.co/products/logstash).
 
 Logstash has both an Elasticsearch input, for reading, an Elasticsearch output, for writing, and a `transform` filter to change the data model. The `input` module accepts a classic Elasticsearch query and the `output` module can be parallelized.
 
-We ran a few tests on Blackhole to determine which configuration was the best, and ended with 5000 documents scrolls and 10 indexing workers.
+We ran a few tests on Blackhole to determine which configuration was the best and ended with 5000 documents scrolls and 10 indexing workers.
 
 ![Testing blackhole metrics](images/image10.png)
 
 Testing with 5000 documents scroll and 10 workers
 
-For these tests, we were running with a production configuration, which explains the refreshes and segment count madness. Indeed, running with 0 replica was faster, but since we're using RAID0, this configuration was a no go.
+For these tests, we were running with a production configuration, which explains the refreshes and segment count madness. Indeed, running with 0 replicas was faster, but since we're using RAID0, this configuration was a no go.
 
 During the operation, both source and target nodes behaved without problems, specifically on the memory level.
 
@@ -225,7 +225,7 @@ Source node for reindexing
 
 Target node behavior
 
-For the first tests, we ran logstash against a full day of reindexation, using a simple Elasticsearch query:
+For the first tests, we ran logstash against a full day of reindexing, using a simple Elasticsearch query:
 
 ```json
 {
@@ -292,7 +292,7 @@ memory:
 index:
 	store:
 		throttle:
-			type : "none" (as fast as your SSD can go)
+			type: "none" (as fast as your SSD can go)
 
 	translog:
 		disable_flush: true
@@ -310,7 +310,7 @@ We wanted to limit the Lucene refreshes as much as we could, preferring to manag
 
 To manage the indexing process, we have created 2 simple tools: Yoko and Moulinette.
 
-Yoko and Moulinette use a simple MySQL database with every index to process, query to run and status. The data model is pretty self explanatory:
+Yoko and Moulinette use a simple MySQL database with every index to process, the query to run, and status. The data model is pretty self-explanatory:
 
 ```sql
 CREATE TABLE `yoko` (
@@ -346,7 +346,7 @@ curl -XPUT "localhost:9200/index/_settings" -H 'Content-Type: application/json' 
 '
 ```
 
-Moulinette is the processing script. It's a small daemon written in Bash (with some ugly bashisms) that runs on every indexing node. It fetches lines in "todo" from the *yoko* table, generates the logstash.conf with the source and destination index, and source and destination node and Logstash query. Then it runs Logstash, and once Logstash exits, switches the line to "done" if Logstash exit code is 0, or "failed" otherwise.
+Moulinette is the processing script. It's a small daemon written in Bash (with some ugly bashisms) that runs on every indexing node. It fetches lines in "todo" from the *yoko* table, generates the logstash.conf with the source and destination index, and source and destination node and Logstash query. Then it runs Logstash, and once Logstash exits it switches the line to "done" if Logstash exit code is 0, or "failed" otherwise.
 
 ---
 
@@ -356,21 +356,21 @@ Once again, the main problem was being CPU bound. As you can see on that Marvel 
 
 ![Reindexing blackhole, 2 days after](images/image13.png)
 
-Having a look at the CPU graphs, there was little we could to to improve the throughput without dropping Logstash and relying on a faster solution running on less nodes.
+Having a look at the CPU graphs, there was little we could do to improve the throughput without dropping Logstash and relying on a faster solution running on fewer nodes.
 
 ![CPU usage](images/image14.png)
 
-The disks operations show well the scroll / index processing. There was certainly some latency inside Logstash for the transform process, but we didn't track it.
+The disks operations show well the scroll/index processing. There was certainly some latency inside Logstash for the transform process, but we didn't track it.
 
 ![Disks operations](images/image15.png)
 
-The other problem was losing nodes. We had some hardware issues and lost some nodes here and there. This caused indexing from that node to crash and indexing to that node to stale since Logstash does not exit when the output endpoint crashes.
+The other problem was losing nodes. We had some hardware issues and lost some nodes here and there. This caused indexing from that node to crash and indexing to that node to go stale since Logstash does not exit when the output endpoint crashes.
 
-This caused many lost time checking (almost) manually logs on every node once or twice a day. If an hourly index took more than 3 hours to process, we would consider it lost and restart Moulinette and move the hourly index to "todo".
+This caused much lost time checking (almost) manually logs on every node once or twice a day. If an hourly index took more than 3 hours to process, we would consider it lost and restart Moulinette and move the hourly index to "todo".
 
-Lesson learned, Yoko and Moulinette V2 will have a better silent error handling. When an index is blocked for more than 3 hours, Yoko will raise an alert and move the index to "todo". The alert will allow to kill the locked Logstash process and restart Moulinette as soon as there's a problem.
+Lesson learned: Yoko and Moulinette V2 will have a better silent error handling. When an index is blocked for more than 3 hours, Yoko will raise an alert and move the index to "todo". The alert will allow to kill the locked Logstash process and restart Moulinette as soon as there's a problem.
 
-The next step is optimizing the indexes, moving from an average of 1500 Lucene segments post indexing to 24 (1 segment per replica). This aims both at improving the performances and removing completely the deleted documents we had after restarting the indexing post crash. When overwriting or deleting a document, Lucene does not actually delete it but flags it at "deleted" until an optimize is performed.
+The next step is optimizing the indexes, moving from an average of 1500 Lucene segments post indexing to 24 (1 segment per replica). This aims both at improving the performances and removing completely the deleted documents we had after restarting the indexing post-crash. When overwriting or deleting a document, Lucene does not actually delete it but flags it at "deleted" until an optimize is performed.
 
 Our optimize script is extremely simple, starting with the indexes that have the most important number of deleted documents to save space.
 
@@ -406,4 +406,4 @@ exit 0
 
 ## Conclusion
 
-Reindexing a large Elasticsearch cluster with major data mode changes was quite interesting. It allowed us to push Elasticsearch and our hardware boundaries to reach a correct throughput. Yoko and Moulinette are now reusable for every Elasticsearch cluster we run at Synthesio, allowing reindexing within a same cluster or cross clusters.
+Reindexing a large Elasticsearch cluster with major data mode changes was quite interesting. It allowed us to push Elasticsearch and our hardware boundaries to reach a correct throughput. Yoko and Moulinette are now reusable for every Elasticsearch cluster we run at Synthesio, allowing reindexing within the same cluster or across clusters.
