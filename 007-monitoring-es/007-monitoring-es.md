@@ -22,9 +22,9 @@ Elastic provides an extensive monitoring system through the X-Pack plugin. X-Pac
 
 ![](images/image7.png)
 
-I have released 3 Grafana dashboards to monitor Elasticsearch Clusters using the data pushed by the X-Pack monitoring plugin. They provide much more information that the X-Pack monitoring interface, and are meant to be used when you need to gather data from various sources. They are not meant to replace X-Pack since they don't provide security, alerting or machine learning feature.
+I have released 3 Grafana dashboards to monitor Elasticsearch Clusters using the data pushed by the X-Pack monitoring plugin. They provide much more information then the X-Pack monitoring interface, and are meant to be used when you need to gather data from various sources. They are not meant to replace X-Pack since they don't provide security, alerting or machine learning feature.
 
-Monitoring the at the cluster level: [https://grafana.com/dashboards/3592](https://grafana.com/dashboards/3592)
+Monitoring at the cluster level: [https://grafana.com/dashboards/3592](https://grafana.com/dashboards/3592)
 
 ![](images/image8.png)
 
@@ -36,7 +36,7 @@ Monitoring at the index level: [https://grafana.com/dashboards/3598](https://gra
 
 ![](images/image10.png)
 
-These dashboards are meant to provide a look at everything Elasticsearch sends to the monitoring node. It doesn't mean you'll actually need these data.
+These dashboards are meant to provide a look at everything Elasticsearch sends to the monitoring node. It doesn't mean you'll actually need this data.
 
 ## Monitoring at the host level
 

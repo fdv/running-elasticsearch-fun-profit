@@ -4,7 +4,7 @@ WIP, COVERS ELASTICSEARCH 5.5.x, UPDATING TO ES 6.5.x
 
 # Elasticsearch and the Java Virtual Machine
 
-Elasticsearch is a software written in Java. It requires the Java Runtime Environment (JRE) deployed on the same host to run. Currently supported version of Elasticsearch can run on the following operating systems / distributions and Java.
+Elasticsearch is a software written in Java. It requires the Java Runtime Environment (JRE) deployed on the same host to run. Currently supported versions of Elasticsearch can run on the following operating systems / distributions and Java.
 
 ## Supported JVM and operating systems / distributions
 
@@ -75,7 +75,7 @@ Java is a garbage collected language. The developer does not have to manage the 
 
 Java 1.8 comes with 3 different garbage collector families, which all have their own feature.
 
-The *Single Collector* uses a single thread to perform the whole garbage collection process. It is efficient on single processor machines, as it suppresses the overhead implied by the communication between threads, but not suitable for most real world use today. It was designed for heap managing small datasets, of an order of 100MB.
+The *Single Collector* uses a single thread to perform the whole garbage collection process. It is efficient on single processor machines, as it suppresses the overhead implied by the communication between threads, but not suitable for most real world use today. It was designed for heaps managing small datasets, of an order of 100MB.
 
 The *Parallel Collector* runs small garbage collections in parallel. Running parallel collections reduces the garbage collection overhead. It was designed for medium to large datasets running on multi threaded hosts.
 
