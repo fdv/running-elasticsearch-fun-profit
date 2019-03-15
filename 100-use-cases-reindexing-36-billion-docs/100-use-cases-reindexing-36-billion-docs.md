@@ -14,7 +14,7 @@ Last week, we decided to reindex a 136TB dataset with a brand new mapping. Upda
 
 We've called our biggest Elasticsearch cluster "Blackhole" because that's exactly what it is: a hot, ready to use datastore being able to contain virtually any amount of data. The only difference to a real black hole is that we can get our data back at the speed of light.
 
-When we designed blackhole, we had to choose between 2 different models.
+When we designed Blackhole, we had to choose between 2 different models.
 
 A few huge machines with 4 * 12 core CPU, 512GB of memory and 36 800GB SSD drives, each of them running multiple instances of Elasticsearch.
 
@@ -26,15 +26,15 @@ Blackhole runs on 75 physical machines:
 
 * 2 http nodes, one in each data center behind an [HAProxy](http://www.haproxy.org/) to load balance the queries.
 * 3 master nodes located in 3 different data center.
-* 70 data nodes into 2 different data center.
+* 70 data nodes in 2 different data center.
 
-Each node has quad-core Xeon D-1521 CPU running at 2.40GHz and 64GB of memory. The data nodes have a RAID0 over 4*800GB SSD drives with XFS. The whole cluster runs a systemd-less Debian Jessie with a 3.14.32 vanilla kernel. The current version of the cluster has 218,75TB of storage and 4,68TB of memory with 2.39TB being allocated to Elasticsearch heap. That's all for the numbers.
+Each node has a quad-core Xeon D-1521 CPU running at 2.40GHz and 64GB of memory. The data nodes have a RAID0 over 4*800GB SSD drives with XFS. The whole cluster runs a systemd-less Debian Jessie with a 3.14.32 vanilla kernel. The current version of the cluster has 218,75TB of storage and 4,68TB of memory with 2.39TB being allocated to Elasticsearch heap. That's all for the numbers.
 
 ---
 
 ## Elasticsearch configuration
 
-Blackhole runs ElasticSearch 1.7.5 on Java 1.8. Indexes have 12 shards and 1 replica. We ensure each data center hosts 100% of our data using Elasticsearch [rack awareness](https://www.elastic.co/guide/en/elasticsearch/reference/current/allocation-awareness.html) feature. This setup allows crashing a whole data center without neither data loss nor downtime, which we test every month.
+Blackhole runs ElasticSearch 1.7.5 on Java 1.8. Indexes have 12 shards and 1 replica. We ensure each data center hosts 100% of our data using Elasticsearch [rack awareness](https://www.elastic.co/guide/en/elasticsearch/reference/current/allocation-awareness.html) feature. This setup allows crashing a whole data center with neither data loss nor downtime, which we test every month.
 
 All the filtered queries are run with `_cache=false` ElasticSearch caches the filtered queries result in memory, making the whole cluster explode at the first search. Running queries on 100GB shards, this is not something you want to see.
 
@@ -162,7 +162,7 @@ For this initial indexing, we decided to go with 1 index per month and 30 shards
 
 The first part of the process took 10 days. We had to fetch 30 billion documents from our main [Galera](http://galeracluster.com/products/) datastore, turn it into JSON and push it into a [Kafka](https://kafka.apache.org/) queue, each month of data being pushed into a different Kafka partition. Since we were scanning the database incrementally, the process went pretty fast considering the amount of data we were processing.
 
-The migration processes were running on 8 virtual machines with 4 core and 8GB RAM. Each machine was running 8 processes of a [Scala](http://www.scala-lang.org/) homemade program.
+The migration processes were running on 8 virtual machines with 4 cores and 8GB RAM. Each machine was running 8 processes of a [Scala](http://www.scala-lang.org/) homemade program.
 
 During the second part, we merged the data from the Kafka with data from 2 other Galera clusters and an Elasticsearch cluster before pushing them into Blackhole.
 
@@ -170,7 +170,7 @@ During the second part, we merged the data from the Kafka with data from 2 other
 
 ## Blackhole initial migration
 
-The merge and indexing parts took place on 8 virtual machines, each having 4 core and 8GB RAM. Each machine was running 8 indexing processes reading an offset of a Kafka partition.
+The merge and indexing parts took place on 8 virtual machines, each having 4 cores and 8GB RAM. Each machine was running 8 indexing processes reading an offset of a Kafka partition.
 
 The indexer was shard aware. It had a mapping between the index it was writing on, its shards, and the data node they were hosted on. This allowed indexing directly on the right data nodes with the lowest possible network latency.
 ![Blackhole sharding](images/image8.svg)
@@ -203,7 +203,7 @@ Instead of polling the data from our database clusters, we decided to reuse the 
 
 This time, we did not use separate virtual machines to host the indexing processes. Instead, we decided to run the indexers on the data nodes, read locally and write on their counterpart in the secondary data center. Considering a 10Gb link and a 46ms network latency, that solution was acceptable. It meant we had 70 machines to both read and write to, allowing maximum parallelism.
 
-There are many solutions to copy an Elasticsearch index to another, but most of them neither allow splitting one-to-many or change the data model. Unfortunately, the new mapping involved deleting some fields and moving other fields somewhere else. Since we did not have the time to build a homemade solution, we decided to go with [Logstash](https://www.elastic.co/products/logstash).
+There are many solutions to copy an Elasticsearch index to another, but most of them either allow splitting one-to-many or change the data model. Unfortunately, the new mapping involved deleting some fields and moving other fields somewhere else. Since we did not have the time to build a homemade solution, we decided to go with [Logstash](https://www.elastic.co/products/logstash).
 
 Logstash has both an Elasticsearch input, for reading, an Elasticsearch output, for writing, and a `transform` filter to change the data model. The `input` module accepts a classic Elasticsearch query and the `output` module can be parallelized.
 
@@ -366,7 +366,7 @@ The disks operations show well the scroll/index processing. There was certainly 
 
 The other problem was losing nodes. We had some hardware issues and lost some nodes here and there. This caused indexing from that node to crash and indexing to that node to go stale since Logstash does not exit when the output endpoint crashes.
 
-This caused much lost time checking (almost) manually logs on every node once or twice a day. If an hourly index took more than 3 hours to process, we would consider it lost and restart Moulinette and move the hourly index to "todo".
+This caused a lot of lost time, checking logs (almost) manually  on every node once or twice a day. If an hourly index took more than 3 hours to process, we would consider it lost and restart Moulinette and move the hourly index to "todo".
 
 Lesson learned: Yoko and Moulinette V2 will have a better silent error handling. When an index is blocked for more than 3 hours, Yoko will raise an alert and move the index to "todo". The alert will allow to kill the locked Logstash process and restart Moulinette as soon as there's a problem.
 

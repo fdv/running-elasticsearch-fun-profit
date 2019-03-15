@@ -17,9 +17,9 @@ First step was to connect both clusters using unicast. To do this, I've added th
 
 At first, I only launched one French node, the one I planned to communicate with the Canadian one as a gateway. After a few hours of shard relocation, everything was green again, and I just I was able to shutdown the first Canadian data node.
 
-That's what I launched the 2 other French nodes. They only knew about each other and the *gateway* node. They did not know anything about the Canadian ones, but it worked like a charm.
+That's when I launched the 2 other French nodes. They only knew about each other and the *gateway* node. They did not know anything about the Canadian ones, but it worked like a charm.
 
-If for some reasons you can't expose your new Elasticsearch cluster, what you can do is adding a http only node you will use as a bridge. Just ensure it can communicate with both clusters by adding 1 IPs of each of their nodes, it works quite well, even with 1 public and 1 private subnets. This gateway provides another advantage: you don't need to update your clusters configuration to make them discover each other.
+If for some reason you can't expose your new Elasticsearch cluster, what you can do is add a http only node, you will use as a bridge. Just ensure it can communicate with both clusters by adding 1 IP of each of their nodes, it works quite well, even with 1 public and 1 private subnet. This gateway provides another advantage: you don't need to update your clusters configuration to make them discover each other.
 
 Once again, it took a few hours to relocate the shards within the cluster, but it was still working like a charm, getting his load of reads and writes from the application.
 
@@ -33,6 +33,6 @@ That's right. The latest part of it was playing with DNS.
 
 ![Changing the DNS on Amazon](images/image3.png)
 
-The main ES hostname the application accesses is managed using Amazon Route53. Route53 provides some nice round robin thing so the same A record can point on many IPs or CNAME with a weight system. It's pretty cool even though it does not provide failover. If one of your nodes crash, it needs to unregister itself from route53.
+The main ES hostname the application accesses is managed using Amazon Route53. Route53 provides some nice round robin thing so the same A record can point to many IPs or CNAME with a weight system. It's pretty cool even though it does not provide failover. If one of your nodes crash, it needs to unregister itself from route53.
 
 As soon as the data transfer was OK, I was able to update route53, adding 3 new records to route53. Then, I deleted the old records and removed the routing nodes from the cluster. Mission successful.

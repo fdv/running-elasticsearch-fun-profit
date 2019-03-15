@@ -16,7 +16,7 @@ At [Synthesio](https://www.synthesio.com/), we're using Elasticsearch pretty mu
 
 There are 8 clusters running in production, with a bit more than 600 bare metal servers, with 1.7PB storage and 37.5TB RAM. Clusters are hosted in 3 data centers. One of them is dedicated to running each cluster third master host to avoid split brains when we lose a whole data center, which happens from time to time.
 
-The servers are mostly 6 core, 12 threads Xeon E5--1650v3 with 64GB RAM and 4*800GB SSD or 2*1.2TB NVME, in RAID0. Some clusters have 12 core bi Xeon E5--2687Wv4 with 256GB RAM.
+The servers are mostly 6 core, 12 thread Xeon E5--1650v3's with 64GB RAM and 4*800GB SSD or 2*1.2TB NVME, in RAID0. Some clusters have 12 core bi Xeon E5--2687Wv4's with 256GB RAM.
 
 The average cluster stats are 85k writes / second, with 1.5M in peak, and 800 reads / second, some clusters having a continuous 25k search / second. Doc size varies from 150kB to 200MB.
 
@@ -24,13 +24,13 @@ The average cluster stats are 85k writes / second, with 1.5M in peak, and 800 re
 
 ## The Blackhole Cluster
 
-Blackhole is a 77 nodes cluster, with 200TB storage, 4.8TB RAM, 2.4TB being allocated to Java, and 924 CPU core. It is made of 3 master nodes, 6 ingest nodes, and 68 data nodes. The cluster holds 1137 indices, with 13613 primary shards, and 1 replica, for 201 billion documents. It gets about 7000 new documents / second, with an average of 800 searches / second on the whole dataset.
+Blackhole is a 77 node cluster, with 200TB storage, 4.8TB RAM, 2.4TB being allocated to Java, and 924 CPU cores. It is made of 3 master nodes, 6 ingest nodes, and 68 data nodes. The cluster holds 1137 indices, with 13613 primary shards, and 1 replica, for 201 billion documents. It gets about 7000 new documents / second, with an average of 800 searches / second on the whole dataset.
 
-Blackhole data nodes are spread between 2 data center. By using rack awareness, we make sure that each data center holds 100% of the data, for high availability. Ingest nodes are rack aware as well, to leverage Elasticsearch prioritising nodes within the same rack when running a query. This allows us to minimise the latency when running a query. A Haproxy controls both the ingest nodes health and proper load balancing amongst all of them.
+Blackhole data nodes are spread between 2 data centers. By using rack awareness, we make sure that each data center holds 100% of the data, for high availability. Ingest nodes are rack aware as well, to leverage Elasticsearch prioritizing nodes within the same rack when running a query. This allows us to minimize the latency when running a query. A Haproxy controls both the ingest nodes health and proper load balancing amongst all of them.
 
 ![Blackhole rack awareness design](images/image16.svg)
 
-Blackhole is feeding is a small part of a larger processing chain. After multiple enrichment and transformation, the data is pushed into a large Kafka queue. A working unit reads the Kafka queue and pushes the data into Blackhole.
+Blackhole is feeding a small part of a larger processing chain. After multiple enrichment and transformations, the data is pushed into a large Kafka queue. A working unit reads the Kafka queue and pushes the data into Blackhole.
 
 ![Blackhole processing chain](images/image17.svg)
 
@@ -96,7 +96,7 @@ Before starting the migration, we had a few prerequisites to fulfill:
 
 ### Expanding Blackhole
 
-The first migration step was throwing more hardware at blackhole.
+The first migration step was throwing more hardware at Blackhole.
 
 We added 90 new servers, split in 2 data centers. Each server has a 6 core Xeon E5--1650v3 CPU, 64GB RAM, and 2 * 1.2TB NVME drives, setup as a RAID0. These servers were set up to use a dedicated network range as we planned to use them to replace the old Blackhole cluster and didn't want to mess with the existing IP addresses.
 
@@ -118,7 +118,7 @@ On the vanity metrics level, Blackhole had:
 * 53626 shards,
 * 279TB of data for 391TB of storage,
 * 10,84TB RAM, 5.42TB being allocated to Java,
-* 2004 core.
+* 2004 cores.
 
 ![Blackhole on steroids](images/image19.png)
 
@@ -238,7 +238,7 @@ curl -XPUT "localhost:9200/_cluster/settings" -H 'Content-Type: application/json
 '
 ```
 
-Then, we shat down Elasticsearch on Barack, Chirack and one of the cluster master nodes.
+Then, we shut down Elasticsearch on Barack, Chirack and one of the cluster master nodes.
 ![Moving from zone to zone](images/image21.svg)
 
 Removing nodes to create a new Blackhole
