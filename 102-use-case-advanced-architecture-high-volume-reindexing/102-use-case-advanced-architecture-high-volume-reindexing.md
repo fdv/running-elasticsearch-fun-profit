@@ -18,7 +18,7 @@ This time, we won't reindex Blackhole but Blink. Blink stores the data we displa
 
 ## A glimpse at our infrastructure
 
-Blink is a group of 3 clusters built around 27 physical hosts each, having 64GB RAM and 4 core / 8 threads Xeon D-1520. They are small, affordable and disposable hosts. The topology is the same for each cluster:
+Blink is a group of 3 clusters built around 27 physical hosts each, having 64GB RAM and 4 core / 8 thread Xeon D-1520's. They are small, affordable and disposable hosts. The topology is the same for each cluster:
 
 * 3 master nodes (2 in our main data center and 1 in our backup data center plus a virtual machine ready to launch in case of major outage)
 * 4 http query nodes (2 in each data center)
@@ -32,7 +32,7 @@ We didn't allocate the http query nodes to a specific zone for a reason: we want
 
 When executing search or GET requests, with shard awareness enabled, Elasticsearch will prefer using local shards – shards in the same awareness group – to execute the request. This is usually faster than crossing racks or awareness zones.
 
-In front of the clusters, we have a layer 7 load balancer made of 2 servers each running Haproxy and holding various virtual IP addresses (VIP). A keepalived ensures the active load balancer holdes the VIP. Each load balancer runs in a different data center for fault tolerance. Haproxy uses the allbackups configuration directive so we access the query nodes in the second data center only when the two first ones are down.
+In front of the clusters, we have a layer 7 load balancer made of 2 servers each running Haproxy and holding various virtual IP addresses (VIP). A keepalived ensures the active load balancer hold's the VIP. Each load balancer runs in a different data center for fault tolerance. Haproxy uses the allbackups configuration directive so we access the query nodes in the second data center only when the two first ones are down.
 
 ```haproxy
 frontend blink_01
@@ -54,7 +54,7 @@ So our infrastructure diagram becomes:
 
 In front of the Haproxy, we have an applicative layer called Baldur. Baldur was developed by my colleague [Nicolas Bazire](https://github.com/nicbaz) to handle multiple versions of a same Elasticsearch index and route queries amongst multiple clusters.
 
-There's a reason why we had to split the infrastructure in multiple clusters even though they all run the same version of Elasticsearch, the same plugins, and they do exactly the same things. Each cluster supports about 10,000 indices, and 30,000 shards. That's a lot, and Elasticsearch master nodes have a hard time dealing with so much indexes and shards.
+There's a reason why we had to split the infrastructure in multiple clusters even though they all run the same version of Elasticsearch, the same plugins, and they do exactly the same things. Each cluster supports about 10,000 indices, and 30,000 shards. That's a lot, and Elasticsearch master nodes have a hard time dealing with so many indexes and shards.
 
 Baldur is both an API and an applicative load balancer built on Nginx with the LUA plugin. It connects to a MySQL database and has a local memcache based cache. Baldur was built for 2 reasons:
 
@@ -72,7 +72,7 @@ The first one is the indexes table with the triplet
 id / cluster id / mapping id
 ```
 
-That's how we manage to index into multiple versions of a same index with the ongoing data during the migration process from one mapping to another.
+That's how we manage to index into multiple versions of the same index with the ongoing data during the migration process from one mapping to another.
 
 The second table is the reports table with the triplet
 
@@ -91,7 +91,7 @@ Just like the load balancers, Baldur holds a VIP managed by another Keepalived, 
 
 Since you know everything you need about our infrastructure, let's talk about playing with our Elasticsearch cluster the smart way for fun and, indeed, profit.
 
-Elasticseach and our indexes naming allows us to be lazy so we can watch more cute kitten videos on Youtube. To create an index with the right mapping and settings, we use Elasticsearch templates and auto create index patterns.
+Elasticsearch and our indexes naming allows us to be lazy so we can watch more cute kitten videos on Youtube. To create an index with the right mapping and settings, we use Elasticsearch templates and auto create index patterns.
 
 Every node in the cluster has the following configuration:
 
@@ -203,7 +203,7 @@ We don't add a replica for 2 reasons:
 * The cluster is zone aware and we only have one zone for the reindexing
 * Indexing with a replica means indexing twice, so using twice as much CPU. Adding a replica after indexing is just transferring the data from one host to another.
 
-Indeed, losing a data node means losing data. If you can't afford reindexing an index multiple times in case of crash, don't do this and add another zone or allow your new indexes to use the data from the existing zone in the backup data center.
+Indeed, losing a data node means losing data. If you can't afford reindexing an index multiple times in case of a crash, don't do this and add another zone or allow your new indexes to use the data from the existing zone in the backup data center.
 
 There's one more thing we want to do before we start indexing.
 
@@ -300,7 +300,7 @@ curl -XDELETE "localhost:9200/<old mapping_id>_<dashboard id>"
 
 This post doesn't deal with cluster optimization for massive indexing on purpose. The Web is full of articles on that topic so I decided it didn't need another one.
 
-What I wanted to show is how we managed to isolate the data within the same cluster so we didn't disturb our clients. Considering our current infrastructure, building 3 more clusters might have been easier, but it has a double cost we didn't want to afford.
+What I wanted to show is how we managed to isolate the data within the same cluster so we didn't disturb our clients. Considering our current infrastructure, building 3 more clusters might have been easier, but it has a double cost we didn't want to pay.
 
 First, it means doubling the infrastructure, so buying even more servers you won't use anymore after the reindexing process. And it means buying these servers 1 or 2 months upfront to make sure they're delivered in time.
 

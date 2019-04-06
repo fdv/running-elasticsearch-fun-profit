@@ -4,31 +4,31 @@ WIP, COVERS ELASTICSEARCH 5.5.x, UPDATING TO ES 6.5.x
 
 # Design for Event Logging
 
-Elasticsearch has made a blast in the event analysis world thanks --- or because of --- the famous Elasticsearch / Logstash / Kibana (ELK) trinity. In this specific use cas, Elasticsearch acts as a hot storage that makes normalized events searchable.
+Elasticsearch has made a blast in the event analysis world thanks --- or because of --- the famous Elasticsearch / Logstash / Kibana (ELK) trinity. In this specific use case, Elasticsearch acts as a hot storage that makes normalized events searchable.
 
 The usual topology of an event analysis infrastructure is more or less the same whatever the technical stack.
 
-Heterogeneous events are pushed from various location into a queue. Queuing has 2 purposes: make sure the data processing won't act as a bottleneck in case of unexpected spike, and make sure no event is lost if the data processing stack crashes.
+Heterogeneous events are pushed from various locations into a queue. Queuing has 2 purposes: make sure the data processing won't act as a bottleneck in case of an unexpected spike, and make sure no event is lost if the data processing stack crashes.
 
-A data processing tool normalises the events. You have 0 chance to have homogeneous events in an event analysis infrastructure. Events can be logs, metrics, or whatever you can think about, and they need to be normalised to be searchable.
+A data processing tool normalizes the events. You have 0 chance to have homogeneous events in an event analysis infrastructure. Events can be logs, metrics, or whatever you can think about, and they need to be normalized to be searchable.
 
 The data processing tool forwards the events to a hot storage where they can be searched. Here, the hot storage is, indeed, Elasticsearch.
 
 ## Design of an event logging infrastructure cluster
 
-Event analysis is the typical use case where you can start small, with a single node cluster, and scale when needed. Most of the times, you won't collect all the events you want to analyse from day 1, so it's OK not to over engineer things.
+Event analysis is the typical use case where you can start small, with a single node cluster, and scale when needed. Most of the time, you won't collect all the events you want to analyse from day 1, so it's OK not to over engineer things.
 
-The event logging infrastructure is the typical tricky use case that might have you pull your hair for some times saying Elasticsearch is the worst software ever. It's both extremely heavy on writes, with only a few search query.
+The event logging infrastructure is the typical tricky use case that might have you pulling your hair for some time saying Elasticsearch is the worst software ever. It's both extremely heavy on writes, with only a few search query.
 
-Writes can easily become the bottleneck of the infrastructure, either from a CPU or storage point of view, one more reason to chose the software prior to Elasticsearch wisely to avoid losing events.
+Writes can easily become the bottleneck of the infrastructure, either from a CPU or storage point of view, one more reason to choose the software prior to Elasticsearch wisely to avoid losing events.
 
 Searches are performed on such an amount of data that one of them might trigger an out of memory error on the Java heap space, or an infinite garbage collection.
 
-Before you start, there's a few things you need to think about. Since we focus on designing an Elasticsearch cluster, we'll start from the moment events are normalised and pushed into Elasticsearch.
+Before you start, there's a few things you need to think about. Since we are focusing on designing an Elasticsearch cluster, we'll start from the moment events are normalized and pushed into Elasticsearch.
 
 ### Throughput: how many events per second (eps) are you going to collect?
 
-This is not a question you can answer out of the box unless you already have a central events collection platform. It's an important one though, as it will define most of your hardware requirements. Events logging varies a lot according to your platform activity, so I'd recommend tracking them for a week or more before you start building your Elasticsearch cluster.
+This is not a question you can answer out of the box unless you already have a central events collection platform. It's an important one though, as it will define most of your hardware requirements. Event logging varies a lot according to your platform activity, so I'd recommend tracking them for a week or more before you start building your Elasticsearch cluster.
 
 One important things to know is: do you need realtime indexing, or can you accept some lag. If the latter is an option, then you can let the lag being indexed after a spike of events happen, so you don't need to build for the maximum amount of events you can get.
 
@@ -44,7 +44,7 @@ This metric is important as well. Knowing about throughput * retention period * 
 
 Storage = throughput * events size * retention period.
 
-Hot data is made of opened, searchable indices. They are the one you'll search into on a regular basis, for debugging or statistics purpose.
+Hot data is made of opened, searchable indices. They are the ones you'll search into on a regular basis, for debugging or statistics purpose.
 
 ### Fault tolerance: can you afford losing your indexed data?
 
@@ -87,7 +87,7 @@ If you decide to go cheap and combine the master and data nodes in a 3 hosts clu
 
 Bulk indexing can put lots of pressure on the server memory, leading the master to exit the cluster. If you plan to run bulk indexing, then add one or 2 dedicated http node.
 
-The same applies to highly memory consuming queries. If you plan to run such queries, then move your master nodes out of the data nodes.
+The same applies to high memory consuming queries. If you plan to run such queries, then move your master nodes out of the data nodes.
 
 ### Queries
 
@@ -97,17 +97,17 @@ The last thing you need to know about is the type of queries that are going to b
 
 Once you've gathered all your prerequisites, it's time for hardware selection.
 
-Unless you're using ZFS as a filesystem to profit from compression and snapshots, you should not need more than 64GB RAM. ZFS is popular both to manage extremely large file systems and for its feature, but is greedy on memory.
+Unless you're using ZFS as a filesystem to profit from compression and snapshots, you should not need more than 64GB RAM. ZFS is popular both to manage extremely large file systems and for its features, but is greedy on memory.
 
-Chose the CPU depending on both your throughput and your filesystem. ZFS is more greedy than ext4, for example. Elasticsearch index thread pool is equal to the number of available processors + 1, with a default queue of 200. So if you have a 24 core host, Elasticsearch will be able to mange 25 indexing at once, with a queue of 200. Everything else will be rejected.
+Choose the CPU depending on both your throughput and your filesystem. ZFS is more greedy than ext4, for example. Elasticsearch index thread pool is equal to the number of available processors + 1, with a default queue of 200. So if you have a 24 core host, Elasticsearch will be able to manage 25 indexing at once, with a queue of 200. Everything else will be rejected.
 
 You can choose to use bulk indexing, which will allow you to index more events at the same time. The default thread pool and queue size are the same as the index thread pool.
 
 The storage part will usually be your bottleneck.
 
-Indeed, local storage and SSD are preferred, but lots of people will chose spinning disks or an external storage with fiberchannel to have more space.
+Indeed, local storage and SSD are preferred, but lots of people will choose spinning disks or an external storage with fiberchannel to have more space.
 
-Whatever you chose, the more disks, the better. More disks provide you more axis, hence a faster indexing. If you go with some RAID10, then chose smaller disks, as very large disks such as 4TB+ spinning disks will take ages to rebuild.
+Whatever you choose, the more disks, the better. More disks provide you more axis, hence a faster indexing. If you go with some RAID10, then choose smaller disks, as very large disks such as 4TB+ spinning disks will take ages to rebuild.
 
 On a single node infrastructure, my favorite setup for a huge host is a RAID10 with as many 3.8TB SSD disks possible. Some servers can host up to 36 of them, which makes 18 available axes for more or less 55TB of usable space.
 
@@ -123,7 +123,7 @@ auth-\$(date +%Y-%m-%d)
 
 You'll probably want to have 1 index for each type of event you want to index, so you can build various, more adapted mappings. Event collection for syslog does not require the same index topology as an application event tracing, or even some temperature metrics you might want to put in a TSDB.
 
-While doing it, remember that too many indexes and too many shards might put lots of pressure on a single host. Constant writing create lots of Lucene segments, so make sure Elasticsearch won't have \"too many open files\" issues.
+While doing it, remember that too many indexes and too many shards might put lots of pressure on a single host. Constant writing creates lots of Lucene segments, so make sure Elasticsearch won't have \"too many open files\" issues.
 
 ## What about some tuning?
 
@@ -147,7 +147,7 @@ indices:
     cache.enabled: false
 ```
 
-You will also have a look at the indexing thread pool. I don't recommend changing the thread pool size, but depending on your throughput, changing the queue size might be a good idea in case of indexing spike.
+You will also have a look at the indexing thread pool. I don't recommend changing the thread pool size, but depending on your throughput, changing the queue size might be a good idea in case of indexing spikes.
 
 ```yaml
 thread_pool:

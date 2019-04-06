@@ -25,7 +25,7 @@ In order to read this book and perform the operations described along its chapte
 - A basic knowledge of UNIX command line and the use of a terminal
 - Your favorite text editor
 
-If you have never used Elasticsearch before, I recommend to create a virtual machine so you won't harm your main system in case of mistake. You can either run it locally using a virtuzlization tool like [Virtualbox](https://www.virtualbox.org/) or on your favorite cloud provider.
+If you have never used Elasticsearch before, I recommend to create a virtual machine so you won't harm your main system in case of mistake. You can either run it locally using a virtualization tool like [Virtualbox](https://www.virtualbox.org/) or on your favorite cloud provider.
 
 ---
 
@@ -39,19 +39,19 @@ A REST API is an application program interface (API) that uses HTTP requests to 
 
 ### Open Source
 
-Open source means that Elasticsearch source code, the recipe to build the software, is public, free, and that anyone can contribute to the project by adding missing feature, documentation or fixing bugs. If accepted by the project, their work is then available to the whole commnunity. Because Elasticsearch is open source, the company behind it can go bankrupt or stop maintaining the project without killing it. Someone else will be able to take over it and keep the project alive.
+Open source means that Elasticsearch source code, the recipe to build the software, is public, free, and that anyone can contribute to the project by adding missing feature, documentation or fixing bugs. If accepted by the project, their work is then available to the whole community. Because Elasticsearch is open source, the company behind it can go bankrupt or stop maintaining the project without killing it. Someone else will be able to take over it and keep the project alive.
 
 ### Java
 
-Java is a programming language created in 1995 by Sun Microsystems. Java applications runs on the top of the Java Virtual Machine (JVM), which means that it is independant of the platform it has been written on. Java is most well known for its Garbage Collector (GC), a powerful way to manage memory.
+Java is a programming language created in 1995 by Sun Microsystems. Java applications runs on the top of the Java Virtual Machine (JVM), which means that it is independent of the platform it has been written on. Java is most well known for its Garbage Collector (GC), a powerful way to manage memory.
 
-Java is not Javascript, which was developped in the mid 90s by Netscape INC. Despite having very similar names, Java and Javascript are two different languages, with a different purpose.
+Java is not Javascript, which was developed in the mid 90s by Netscape INC. Despite having very similar names, Java and Javascript are two different languages, with a different purpose.
 
 > Javascript is to Java what hamster is to ham. – Jeremy Keith
 
 ### Distributed
 
-Elasticsearch runs on as many hosts as required by the workload or the amount of data. Hosts communicate and synchronise using messages over the network. A networked machine running Elasticsearch is called a node, and the whole group of nodes sharing the same cluster name is called a cluster.
+Elasticsearch runs on as many hosts as required by the workload or the amount of data. Hosts communicate and synchronize using messages over the network. A networked machine running Elasticsearch is called a node, and the whole group of nodes sharing the same cluster name is called a cluster.
 
 ### Scalable
 
@@ -71,11 +71,11 @@ Each host in an Elasticsearch cluster can fulfill one or multiple roles in the f
 
 ### Master node
 
-The master nodes control the cluster. They gives joining nodes informations about the cluster, decides where to move the data, and reallocates the missing data when a node leaves. When multiple nodes can handle the master role, Elasticsearch elects an acting master. The acting master is called `elected master` When the elected master leaves the cluster, another master node takes over the role of elected master.
+The master nodes control the cluster. They gives joining nodes information about the cluster, decides where to move the data, and reallocates the missing data when a node leaves. When multiple nodes can handle the master role, Elasticsearch elects an acting master. The acting master is called `elected master` When the elected master leaves the cluster, another master node takes over the role of elected master.
 
 ### Ingest  nodes
 
-An ingest node pre-processs documents before the actual document indexing happens. The ingest node intercepts bulk and index requests, it applies transformations, and it then passes the documents back to the index or bulk APIs. 
+An ingest node pre-process's documents before the actual document indexing happens. The ingest node intercepts bulk and index requests, it applies transformations, and it then passes the documents back to the index or bulk APIs. 
 
 All nodes enable ingest by default, so any node can handle ingest tasks. You can also create dedicated ingest nodes.
 
@@ -107,7 +107,7 @@ An `index` is a group of documents that with similar characteristics. It is iden
 
 An Elasticsearch `index` is composed of 1 or multiple `shards`. A `shard` is a Lucene index, and the number of `shards` is defined at the `index` creation time.  Elasticsearch allocates an `index` `shards` accross the cluster, either automatically or according to user defined rules.
 
-Lucene is the name of the search engine that powers Elasticsearh. It is an open source project from the Apache Foundation. You most probably never hear about Lucene when operating an Elasticsearch cluster, but this book covers the basics you need to know.
+Lucene is the name of the search engine that powers Elasticsearch. It is an open source project from the Apache Foundation. You most probably never hear about Lucene when operating an Elasticsearch cluster, but this book covers the basics you need to know.
 
 A `shard` is made of one or multiple `segments`, which are binary files where Lucene indexes the stored documents.
 

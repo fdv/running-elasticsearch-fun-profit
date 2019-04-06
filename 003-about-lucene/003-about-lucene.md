@@ -6,11 +6,11 @@ WIP, COVERS ELASTICSEARCH 5.5.x, UPDATING TO ES 6.5.x
 
 Before you start to think about choosing the right hardware, there are a few things you need to know about [Lucene](http://lucene.apache.org/).
 
-Lucene is the name of the search engine that powers Elasticsearh. It is an open source project from the Apache Foundation. There's no need to interact with Lucene directly, at least most of the time, when running Elasticsearch. But there's a few important things to know before chosing the cluster storage and file system.
+Lucene is the name of the search engine that powers Elasticsearch. It is an open source project from the Apache Foundation. There's no need to interact with Lucene directly, at least most of the time, when running Elasticsearch. But there's a few important things to know before choosing the cluster storage and file system.
 
 ## Lucene segments
 
-Each Elasticsearch index is divided into shards. Shards are both logical and physical division of an index. Each Elasticsearch shard is a Lucene index. The maximum number of documents you can have in a Lucene index is 2,147,483,519. The Lucene index is divided into smaller files called segments. A segment is a small Lucene index. Lucene searches in all segments sequentially.
+Each Elasticsearch index is divided into shards. Shards are both logical and physical divisions of an index. Each Elasticsearch shard is a Lucene index. The maximum number of documents you can have in a Lucene index is 2,147,483,519. The Lucene index is divided into smaller files called segments. A segment is a small Lucene index. Lucene searches in all segments sequentially.
 
 ![Inside an Elasticsearch index](images/image2.svg)
 

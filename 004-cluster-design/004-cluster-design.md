@@ -17,7 +17,7 @@ What you'll find here is a list of things you need to know and understand to des
 
 > Unless you plan to use Elasticsearch to power the search of your blog or a small e-commerce website, your first design will fail.
 
-You can't design a cluster without knowing what your workload will be, how much search and writes per second you'll get, how fast your indexes will grow, and what kind of queries your users will run, against what type of content. And you can't know about your workload unless you've ran your cluster in production for a while. You'll most probably have to iterate 2 or 3 times before you get the design right. I've been running Elasticsearch in production since mid 2011 and I never got it right the first time.
+You can't design a cluster without knowing what your workload will be, how many search and writes per second you'll get, how fast your indexes will grow, and what kind of queries your users will run, against what type of content. And you can't know about your workload unless you've ran your cluster in production for a while. You'll most probably have to iterate 2 or 3 times before you get the design right. I've been running Elasticsearch in production since mid 2011 and I never get it right the first time.
 
 ## Elasticsearch is elastic, for real
 
@@ -35,7 +35,7 @@ There's another basic concept that's often poorly understood.
 
 There's 2 things about elasticity when you design your cluster.
 
-The first one is horizontal scaling. You can build a cluster with virtually an infinity of hosts, depending on your needs and the bottleneck you face. Sometimes, running your dataset on a lot of small machines will provide bette performances than using a few large hosts. Sometimes, running on medium hosts with lots of disk is better. And sometimes, you'll need gonzo CPU but storage and memory won't be a problem.
+The first one is horizontal scaling. You can build a cluster with virtually an infinity of hosts, depending on your needs and the bottleneck you face. Sometimes, running your dataset on a lot of small machines will provide bette performances than using a few large hosts. Sometimes, running on medium hosts with lots of disks is better. And sometimes, you'll need gonzo CPU but storage and memory won't be a problem.
 
 The other one is index sharding. Elasticsearch divides indexes in physical spaces called shards. They allow you to easily split the data between hosts, but there's a drawback as the number of shards is defined at index creation. Elasticsearch default is 5 shards per index, but only your workload will help you to define the right number of shards. Thankfully, there's a way to scale existing indexes in production using reindexing and index aliases.
 
@@ -77,7 +77,7 @@ Using `rack_id` on the http nodes is interesting too, as Elasticsearch will run 
 
 Before you start to think about choosing the right hardware, there are a few things you need to know about [Lucene](http://lucene.apache.org/).
 
-Lucene is the name of the search engine that powers Elasticsearh. It is an open source project from the Apache Foundation. There's no need to interact with Lucene directly, at least most of the time, when running Elasticsearch. But there's a few important things to know before chosing the cluster storage and file system.
+Lucene is the name of the search engine that powers Elasticsearch. It is an open source project from the Apache Foundation. There's no need to interact with Lucene directly, at least most of the time, when running Elasticsearch. But there's a few important things to know before chosing the cluster storage and file system.
 
 ### Lucene segments
 
@@ -167,7 +167,7 @@ curl -XGET "localhost:9200/_nodes/stats"
 
 Elasticsearch uses multiple buffers to perform in memory operations, as well as caches to store the queries results with a system of LRU when the cache becomes full. When the results are mostly large datasets and the queries are not repeated often, disabling the caches might be a good idea.
 
-The caches you need to monitore are:
+The caches you need to monitor are:
 
 - the [`query cache`](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-cache.html): defined per node, with a default of 10% of the heap.
 - the [`shard request cache `](https://www.elastic.co/guide/en/elasticsearch/reference/current/shard-request-cache.html): used to compute the result of queries ran on multiple shards.
@@ -178,7 +178,7 @@ Since version 5, Elasticsearch buffers were simplified, and there are only 2 buf
 - the [`indexing buffer`](https://www.elastic.co/guide/en/elasticsearch/reference/current/indexing-buffer.html): it is used to buffer data during the indexing process.
 - the `buffer_pools`.
 
-Elasticsearch is not idiotproof and won't tell you if you allocate more than 100% of the heap to the multiple buffers and caches, unless you try to fill them all at the same time. Then you'll get an out of memory error.
+Elasticsearch is not idiot proof and won't tell you if you allocate more than 100% of the heap to the multiple buffers and caches, unless you try to fill them all at the same time. Then you'll get an out of memory error.
 
 I said earlier that too much memory might lead to management issues. Actually, the more memory the better when you play outside of the heap. The off heap memory is used to manage threads and for the filesystem to cache the data.
 
@@ -224,17 +224,17 @@ After memory, storage is often the bottleneck of an Elasticsearch cluster. Unles
 
 A question that comes often about storage design is: **should I go with RAID0, RAID1(0) or JBOD?**
 
-**RAID0** offers the best cost / speed / storage space ratio. It fits perfectly in large clusters where losing a node is not a problem. RAID0 offers the maximum storage space on a single file system, which is convenient when managing large shards. Without enough available storage on a single node, operations like index optimisation won't be possible. RAID0 also offers the maximum number of axes, without the RAID1(0) replication overhead, useful for intensive indexing.
+**RAID0** offers the best cost / speed / storage space ratio. It fits perfectly in large clusters where losing a node is not a problem. RAID0 offers the maximum storage space on a single file system, which is convenient when managing large shards. Without enough available storage on a single node, operations like index optimization won't be possible. RAID0 also offers the maximum number of axes, without the RAID1(0) replication overhead, useful for intensive indexing.
 
 On the other hand, losing a single disk means losing a whole data node, so choosing RAID0 implies to have enough spare data nodes to store the whole dataset in case of crash.
 
-**JBOD** offers the best cost / storage / security ratio. Each disk is affected to a mountpoint, and the mountpoints are listed in Elasticsearch configuration. JBOD is a good choice when you can't afford to lose a whole data node, but losing a whole disk is OK, but provides less read and write performances. Running large shards on JBOD can also be a problem to perform administrative tasks like index optimisation.
+**JBOD** offers the best cost / storage / security ratio. Each disk is affected to a mountpoint, and the mountpoints are listed in Elasticsearch configuration. JBOD is a good choice when you can't afford to lose a whole data node, but losing a whole disk is OK, but provides less read and write performances. Running large shards on JBOD can also be a problem to perform administrative tasks like index optimization.
 
 Depending on how many data nodes you can afford to lose, running many hosts with software RAID0 is the best speed / storage space / cost setup. Otherwise, use JBOD to reduce the I/Os involved by RAID 1 and RAID10 replication.
 
 **RAID1(0)** is the option for people who run Elasticsearch on a single node. It provides the maximum security for the data availability as losing a disk is possible, but at the cost of space and performances. RAID1(0) implies to use half of the storage for the RAID replication, and the replication overhead is something to take into account.
 
-Elasticsearch comes with 2 storage related throttling protection. The first one limits the bandwidth of the storage you can use, and is as low as 10mb/s. You can change it in the nodes settings:
+Elasticsearch comes with 2 storage related throttling protections. The first one limits the bandwidth of the storage you can use, and is as low as 10mb/s. You can change it in the nodes settings:
 
 ```yaml
 indices:
@@ -258,11 +258,11 @@ Once done with the hardware, there's a few things you should have a look at on t
 
 ### The Linux (or FreeBSD) kernel
 
-The Linux kernel version you run on is important. Prefer the 4.9.x version as it provides many interesting fixes and performances improvements, and comes with a great tracing framework you can rely on when troubleshooting performances. Take the time to read the Kernel CHANGELOG every time a new release is out, it and don't mind upgrading often if it's worth it. For example, Linux 4.9.25 (or 4.9.0.0-BPO3 on Debian) fixed many regressions on XFS introduced with the 4.9.13 that screwed up the filesystem performances.
+The Linux kernel version you run on is important. Prefer the 4.9.x version as it provides many interesting fixes and performances improvements, and comes with a great tracing framework you can rely on when troubleshooting performances. Take the time to read the Kernel CHANGELOG every time a new release is out, and don't mind upgrading often if it's worth it. For example, Linux 4.9.25 (or 4.9.0.0-BPO3 on Debian) fixed many regressions on XFS introduced with the 4.9.13 that screwed up the filesystem performances.
 
 ### The Java Virtual Machine
 
-The JVM you pick up is critical too, and you need to read and understand their specifications to get the best of your cluster. Elasticsearch runs best on Java 1.8, which provides G1GC, and does not support the unreleased Java 1.9 yet, but it supports various flavors of the Java virtual machine, so chose wisely. I usually run the Oracle JVM, but OpenJDK is cool too. Once again, don't mind upgrading your Java version often if a release fixes bugs of improve performances. Elasticsearch is not MySQL, and rebooting often is OK. Read the CHANGELOG to stay up to date.
+The JVM you pick up is critical too, and you need to read and understand their specifications to get the best of your cluster. Elasticsearch runs best on Java 1.8, which provides G1GC, and does not support the unreleased Java 1.9 yet, but it supports various flavors of the Java virtual machine, so choose wisely. I usually run the Oracle JVM, but OpenJDK is cool too. Once again, don't mind upgrading your Java version often if a release fixes bugs of improve performances. Elasticsearch is not MySQL, and rebooting often is OK. Read the CHANGELOG to stay up to date.
 
 ### The filesystem
 
