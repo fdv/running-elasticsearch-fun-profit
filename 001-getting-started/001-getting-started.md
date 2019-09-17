@@ -71,7 +71,7 @@ Each host in an Elasticsearch cluster can fulfill one or multiple roles in the f
 
 ### Master node
 
-The master nodes control the cluster. They gives joining nodes information about the cluster, decides where to move the data, and reallocates the missing data when a node leaves. When multiple nodes can handle the master role, Elasticsearch elects an acting master. The acting master is called `elected master` When the elected master leaves the cluster, another master node takes over the role of elected master.
+The master nodes control the cluster. They give joining nodes information about the cluster, decide where to move the data, and reallocate the missing data when a node leaves. When multiple nodes can handle the master role, Elasticsearch elects an acting master. The acting master is called `elected master` When the elected master leaves the cluster, another master node takes over the role of elected master.
 
 ### Ingest  nodes
 
