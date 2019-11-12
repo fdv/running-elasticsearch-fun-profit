@@ -202,7 +202,7 @@ Let's put it this way: you never have too much bandwidth. 1GB is good, 10GB is b
 
 The multicast discovery plugin was removed from Elasticsearch 5, so discovery is done either using unicast or a cloud plugin, but you won't run Elasticsearch in the cloud, will you?
 
-If your hosting provider allows it, activate the Jumbo frames on your network interfaces. Jumbo frames might reduces the network latency by about 15% which is noticeable when transferring large amount of data.
+If your hosting provider allows it, activate the Jumbo frames on your network interfaces. Jumbo frames might reduce the network latency by about 15% which is noticeable when transferring large amount of data.
 
 ```bash
 ifconfig eth0 mtu 9000
