@@ -85,7 +85,7 @@ Data nodes store the indexed data. They are responsible for managing stored data
 
 ### Tribe Nodes
 
-Tribe nodes connect to multiple Elasticsearch clusters and performs operations such as search accross every connected clusters. 
+Tribe nodes connect to multiple Elasticsearch clusters and performs operations such as search across every connected clusters. 
 
 ### A Minimal, Fault Tolerant Elasticsearch Cluster
 
