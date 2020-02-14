@@ -34,4 +34,4 @@ This copy on write has an operational consequence. As you'll update or delete do
 
 During a merge, Lucene takes 2 segments, and moves the content into a third, new one. Then the old segments are deleted from the disk. It means Lucene needs enough free space on the disk to create a segment the size of both segments it needs to merge.
 
-A problem can arise when force merging a huge shard. If the shard size is \> half of the disk size, you provably won't be able to fully merge it, unless most of the data is made of deleted documents.
+A problem can arise when force merging a huge shard. If the shard size is \> half of the disk size, you probably won't be able to fully merge it, unless most of the data is made of deleted documents.
