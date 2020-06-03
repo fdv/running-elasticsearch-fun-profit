@@ -24,7 +24,7 @@ We opted for the latter since it would make scaling much easier and didn't requi
 
 Blackhole runs on 75 physical machines:
 
-* 2 http nodes, one in each data center behind an [HAProxy](http://www.haproxy.org/) to load balance the queries.
+* 2 ingest nodes, one in each data center behind an [HAProxy](http://www.haproxy.org/) to load balance the queries.
 * 3 master nodes located in 3 different data center.
 * 70 data nodes in 2 different data center.
 
