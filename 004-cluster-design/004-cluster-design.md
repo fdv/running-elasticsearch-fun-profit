@@ -47,7 +47,7 @@ The minimum requirement for a fault tolerant cluster is:
 
 - 3 locations to host your nodes. 2 locations to run half of your cluster, and one for the backup master node.
 - 3 master nodes. You need an odd number of eligible master nodes to avoid split brains when you lose a whole data center. Put one master node in each location so you hopefully never lose the quorum.
-- 2 http nodes, one in each primary data center.
+- 2 ingest nodes, one in each primary data center.
 
 As many data nodes as you need, split evenly between both main locations.
 
@@ -71,7 +71,7 @@ node:
     rack_id: "dontsmokecrack"
 ```
 
-Using `rack_id` on the http nodes is interesting too, as Elasticsearch will run the queries on the closest neighbours. A query sent to the http node located in the datacenter 1 will more likely run on the same data center data nodes.
+Using `rack_id` on the ingest nodes is interesting too, as Elasticsearch will run the queries on the closest neighbours. A query sent to the ingest node located in the datacenter 1 will more likely run on the same data center data nodes.
 
 ## A few things you need to know about Lucene
 
@@ -143,7 +143,7 @@ I wouldn't recommend changing the thread pool size unless you really know what y
 curl -XGET "localhost:9200/_cat/thread_pool/search?v&h=host,name,active,rejected,completed"
 ```
 
-A special trick when your cluster is CPU bound and you can support a replica of your data set on every node: run your cluster behind a Haproxy and bypass the http nodes to hit the data node. If you have heterogeneous nodes, give a greater weight to the nodes with the highest number of cores.
+A special trick when your cluster is CPU bound and you can support a replica of your data set on every node: run your cluster behind a Haproxy and bypass the ingest nodes to hit the data node. If you have heterogeneous nodes, give a greater weight to the nodes with the highest number of cores.
 
 ### Memory
 

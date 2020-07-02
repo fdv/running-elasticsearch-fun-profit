@@ -65,7 +65,7 @@ If you start combining events analysis with alerting, or if you need your events
 
 ![](images/image6.svg)
 
-Here, the minimal hosts configuration for the master / http node is:
+Here, the minimal hosts configuration for the master / ingest node is:
 
 ```yaml
 master: true
@@ -85,7 +85,7 @@ index:
 
 If you decide to go cheap and combine the master and data nodes in a 3 hosts cluster, never use bulk indexing.
 
-Bulk indexing can put lots of pressure on the server memory, leading the master to exit the cluster. If you plan to run bulk indexing, then add one or 2 dedicated http node.
+Bulk indexing can put lots of pressure on the server memory, leading the master to exit the cluster. If you plan to run bulk indexing, then add one or 2 dedicated ingest node.
 
 The same applies to high memory consuming queries. If you plan to run such queries, then move your master nodes out of the data nodes.
 
