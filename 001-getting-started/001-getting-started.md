@@ -21,11 +21,11 @@ In this introduction chapter you will learn:
 
 In order to read this book and perform the operations described along its chapters, you need:
 
-- A machine or virtual machine running one of the popular Linux or Unix environments: Debian / Ubuntu, RHEL / CentOS or FreeBSD. Running Elasticsearch on Mac OS or Windows is not covered in this book
+- [Docker](https://docs.docker.com/get-docker/) installed in your machine or a machine or virtual machine running one of the popular Linux or Unix environments: Debian / Ubuntu, RHEL / CentOS or FreeBSD. Running Elasticsearch on Mac OS or Windows is not covered in this book
 - A basic knowledge of UNIX command line and the use of a terminal
 - Your favorite text editor
 
-If you have never used Elasticsearch before, I recommend to create a virtual machine so you won't harm your main system in case of mistake. You can either run it locally using a virtualization tool like [Virtualbox](https://www.virtualbox.org/) or on your favorite cloud provider.
+If you have never used Elasticsearch before, I recommend to create a virtual machine so you won't harm your main system in case of mistake. You can either run it locally using docker or a virtualization tool like [Virtualbox](https://www.virtualbox.org/) or on your favorite cloud provider.
 
 ---
 
@@ -126,6 +126,44 @@ TODO [issue #9](https://github.com/fdv/running-elasticsearch-fun-profit/issues/9
 ### Deploying Elasticsearch on RHEL / CentOS
 
 TODO [issue #9](https://github.com/fdv/running-elasticsearch-fun-profit/issues/9)
+
+### Deploying Elasticsearch with Docker
+
+This is the example of deploying Elasticsearch with docker-compose. Install [docker-compose](https://docs.docker.com/compose/install/) first if you don't have it in your machine.
+
+1. Create a new folder called `elasticsearch` and create a new file inside called `docker-compose.yml`
+2. Copy this script to `docker-compose.yml`
+```
+version: '3'
+
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.3.1
+    environment:
+      - network.bind_host=0.0.0.0
+      - network.publish_host=127.0.0.1
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./esdata:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+  kibana:
+    image: docker.elastic.co/kibana/kibana:6.3.1
+    ports:
+      - "5601:5601"
+volumes:
+  esdata:
+    driver: local
+```
+3. Run `docker-compose up` and wait until all processes started
+
+The script above will create two containers, one node Elasticsearch container and Kibana container. Both have the same version `6.3.1` and started with default configuration. You can access your Elasticsearch node through `localhost:9200` and also can open Kibana UI by opening your web browser and open `localhost:5601` in your search bar.
 
 ---
 
