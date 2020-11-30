@@ -85,7 +85,7 @@ Data nodes store the indexed data. They are responsible for managing stored data
 
 ### Tribe Nodes
 
-Tribe nodes connect to multiple Elasticsearch clusters and performs operations such as search accross every connected clusters. 
+Tribe nodes connect to multiple Elasticsearch clusters and performs operations such as search across every connected clusters. 
 
 ### A Minimal, Fault Tolerant Elasticsearch Cluster
 
@@ -105,7 +105,7 @@ Having 3 master nodes is important to make sure that the cluster won't be in a s
 
 An `index` is a group of documents that with similar characteristics. It is identified by a name which is used when performing operations against stored documents or the `index` structure itself. An `index` structure is defined by a `mapping`, a `JSON` file describing both the document characteristics and the `index` options such as the replication factor. In an Elasticsearch cluster, you can define as many `indexes` as you want.
 
-An Elasticsearch `index` is composed of 1 or multiple `shards`. A `shard` is a Lucene index, and the number of `shards` is defined at the `index` creation time.  Elasticsearch allocates an `index` `shards` accross the cluster, either automatically or according to user defined rules.
+An Elasticsearch `index` is composed of 1 or multiple `shards`. A `shard` is a Lucene index, and the number of `shards` is defined at the `index` creation time.  Elasticsearch allocates an `index` `shards` across the cluster, either automatically or according to user defined rules.
 
 Lucene is the name of the search engine that powers Elasticsearch. It is an open source project from the Apache Foundation. You most probably never hear about Lucene when operating an Elasticsearch cluster, but this book covers the basics you need to know.
 
