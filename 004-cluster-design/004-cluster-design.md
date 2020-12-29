@@ -35,7 +35,7 @@ There's another basic concept that's often poorly understood.
 
 There's 2 things about elasticity when you design your cluster.
 
-The first one is horizontal scaling. You can build a cluster with virtually an infinity of hosts, depending on your needs and the bottleneck you face. Sometimes, running your dataset on a lot of small machines will provide bette performances than using a few large hosts. Sometimes, running on medium hosts with lots of disks is better. And sometimes, you'll need gonzo CPU but storage and memory won't be a problem.
+The first one is horizontal scaling. You can build a cluster with virtually an infinity of hosts, depending on your needs and the bottleneck you face. Sometimes, running your dataset on a lot of small machines will provide better performances than using a few large hosts. Sometimes, running on medium hosts with lots of disks is better. And sometimes, you'll need gonzo CPU but storage and memory won't be a problem.
 
 The other one is index sharding. Elasticsearch divides indexes in physical spaces called shards. They allow you to easily split the data between hosts, but there's a drawback as the number of shards is defined at index creation. Elasticsearch default is 5 shards per index, but only your workload will help you to define the right number of shards. Thankfully, there's a way to scale existing indexes in production using reindexing and index aliases.
 
